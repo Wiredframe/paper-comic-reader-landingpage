@@ -45,7 +45,7 @@
 		}
 
 		html {
-			scroll-padding-top: 5.5rem;
+			scroll-padding-top: 1.5rem;
 			overflow-x: clip;
 		}
 
@@ -69,23 +69,11 @@
 			letter-spacing: -0.005em;
 		}
 
-		.eyebrow {
-			font-size: .74rem;
-			line-height: 1;
-			font-weight: 600;
-			letter-spacing: .15em;
-			text-transform: uppercase;
-			color: var(--muted);
-			display: inline-flex;
-			align-items: center;
-			gap: .55rem;
-		}
-
-		.eyebrow::before {
-			content: "";
-			width: 1.4rem;
-			height: 2px;
-			border-radius: 2px;
+		.dash {
+			display: block;
+			width: 2.5rem;
+			height: 3px;
+			border-radius: 3px;
 			background: var(--accent-2);
 		}
 
@@ -736,9 +724,9 @@
 		}
 
 		.shot {
-			border-radius: 26px;
-			background: #101014;
-			padding: 5px;
+			border-radius: 46px;
+			background: linear-gradient(150deg, #202027, #0e0e12);
+			padding: 9px;
 			box-shadow: var(--shadow);
 			cursor: zoom-in;
 			transition: transform .35s cubic-bezier(.2, .7, .2, 1);
@@ -748,7 +736,7 @@
 			display: block;
 			width: 100%;
 			height: auto;
-			border-radius: 22px;
+			border-radius: 38px;
 		}
 
 		@media (hover: hover) and (prefers-reduced-motion: no-preference) {
@@ -884,37 +872,17 @@
 </head>
 
 <body class="font-sans antialiased">
-	<!-- ============ HEADER ============ -->
-	<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl"
-		style="background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid var(--hair)">
-		<div class="mx-auto max-w-6xl px-5 sm:px-8 h-[4.25rem] flex items-center justify-between gap-4">
-			<a href="#top" class="flex items-center gap-2.5 shrink-0">
-				<img src="assets/appicon.png" alt="Paper Comic Reader app icon" class="w-8 h-8 rounded-[9px] shadow-sm" />
-				<span class="font-display text-[1.24rem] font-bold tracking-tight">Paper Comic Reader</span>
-			</a>
-			<nav class="hidden lg:flex items-center gap-8 text-[.92rem]" style="color:var(--ink-2)">
-				<a href="#paper" class="hover:opacity-70">Paper Effect</a>
-				<a href="#features" class="hover:opacity-70">Features</a>
-				<a href="#privacy" class="hover:opacity-70">Privacy</a>
-				<a href="#download" class="hover:opacity-70">Download</a>
-			</nav>
-			<a href="#download"
-				class="btn-primary hidden sm:inline-flex items-center gap-2 rounded-full px-4 h-10 text-[.9rem] font-semibold">
-				Get the app<span class="opacity-70 font-normal hidden md:inline"> · Free</span>
-			</a>
-		</div>
-	</header>
-
 	<main id="top">
 		<!-- ============ HERO ============ -->
 		<section class="relative overflow-hidden">
 			<div class="hero-bg absolute inset-0"></div>
-			<div class="relative mx-auto max-w-6xl px-5 sm:px-8 pt-28 sm:pt-36 pb-14 sm:pb-20">
+			<div class="relative mx-auto max-w-6xl px-5 sm:px-8 pt-16 sm:pt-24 pb-14 sm:pb-20">
 				<div class="grid lg:grid-cols-[1.05fr_.95fr] gap-12 lg:gap-10 items-center">
 					<div class="reveal text-center lg:text-left">
-						<span class="eyebrow justify-center lg:justify-start">Free · Open source · iPhone &amp; iPad</span>
+						<img src="assets/appicon.png" alt="Paper Comic Reader app icon"
+							class="w-20 h-20 lg:w-32 lg:h-32 rounded-[23%] shadow-lg mx-auto lg:mx-0" />
 						<h1
-							class="font-display font-extrabold mt-5 text-[clamp(2.4rem,6vw,4.3rem)] leading-[1.02] tracking-tight text-balance">
+							class="font-display font-extrabold mt-6 text-[clamp(2.4rem,6vw,4.3rem)] leading-[1.02] tracking-tight text-balance">
 							Comics that read like <span class="mark">paper</span>, not a backlit screen.
 						</h1>
 						<p class="mt-6 mx-auto lg:mx-0 max-w-[48ch] text-[1.12rem] leading-relaxed" style="color:var(--ink-2)">
@@ -980,7 +948,7 @@
 			<div class="mx-auto max-w-6xl px-5 sm:px-8">
 				<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 					<div class="reveal max-w-xl">
-						<span class="eyebrow">The signature feature</span>
+						<span class="dash"></span>
 						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
 							Ink on paper, not a glowing screen.
 						</h2>
@@ -1188,7 +1156,7 @@
 					</div>
 					<!-- copy -->
 					<div class="reveal d1 lg:order-2 order-1 max-w-xl">
-						<span class="eyebrow">Your whole library, streamed</span>
+						<span class="dash"></span>
 						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
 							Point it at a folder. Browse everything.
 						</h2>
@@ -1214,7 +1182,7 @@
 				<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 					<!-- copy -->
 					<div class="reveal max-w-xl">
-						<span class="eyebrow">Never lose your place</span>
+						<span class="dash"></span>
 						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
 							Bookmarks you can actually recognize.
 						</h2>
@@ -1324,7 +1292,7 @@
 					</div>
 					<!-- copy -->
 					<div class="reveal d1 lg:order-2 order-1 max-w-xl">
-						<span class="eyebrow">Browse like a longbox</span>
+						<span class="dash"></span>
 						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
 							Cover-flow browsing, with a shuffle.
 						</h2>
@@ -1348,7 +1316,7 @@
 		<section id="features" class="py-20 sm:py-28" style="background:var(--surface)">
 			<div class="mx-auto max-w-6xl px-5 sm:px-8">
 				<div class="reveal max-w-2xl">
-					<span class="eyebrow">Everything else on board</span>
+					<span class="dash"></span>
 					<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
 						Small app. Deep reader.
 					</h2>
@@ -1542,7 +1510,7 @@
 			<div class="mx-auto max-w-6xl px-5 sm:px-8">
 				<div class="reveal ui-card px-6 sm:px-12 py-14 sm:py-16 text-center"
 					style="background:linear-gradient(180deg,#fffdf2,var(--surface))">
-					<span class="eyebrow justify-center">Private by design</span>
+					<span class="dash mx-auto"></span>
 					<h2 class="font-display font-extrabold mt-5 text-[clamp(2rem,5vw,3.4rem)] leading-[1.05] text-balance">
 						Paper Comic Reader collects <span class="mark">nothing.</span>
 					</h2>
@@ -1564,12 +1532,12 @@
 		<section class="pb-4">
 			<div class="mx-auto max-w-6xl px-5 sm:px-8">
 				<div class="reveal">
-					<span class="eyebrow">See it</span>
+					<span class="dash"></span>
 					<h2 class="font-display font-bold mt-4 text-[clamp(1.7rem,3.6vw,2.6rem)] leading-tight">Straight from the
 						app.</h2>
 				</div>
 			</div>
-			<div class="gal-scroll mt-8 flex gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-8 pb-8">
+			<div class="gal-scroll flex gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-8 pt-8 pb-10">
 				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/1-recents.png"
 					data-caption="Recents"><img src="assets/img/1-recents.png" alt="Recents — continue reading" width="780"
 						height="1689" loading="lazy" /></figure>
@@ -1645,7 +1613,7 @@
 			<div class="mx-auto max-w-6xl px-5 sm:px-8">
 				<div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 					<div class="reveal max-w-xl">
-						<span class="eyebrow">Support</span>
+						<span class="dash"></span>
 						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
 							Free — and that's the whole deal.
 						</h2>
@@ -1663,7 +1631,7 @@
 						style="background:var(--surface);border:1px solid color-mix(in srgb,var(--accent-2) 45%,var(--hair));box-shadow:var(--shadow)">
 						<div class="absolute inset-x-0 top-0 h-1"
 							style="background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div>
-						<span class="eyebrow normal-case tracking-[.05em]">Two ways</span>
+						<span class="dash"></span>
 						<a data-donate href="#support"
 							class="btn-primary mt-5 inline-flex items-center justify-center gap-2 rounded-full px-6 h-[3.25rem] w-full text-[1rem] font-semibold">
 							<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
