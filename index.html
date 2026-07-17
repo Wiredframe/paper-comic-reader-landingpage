@@ -89,9 +89,11 @@
 		}
 
 		.pill {
-			border: 1px solid var(--hair);
-			color: var(--muted);
-			background: color-mix(in srgb, var(--surface) 60%, transparent);
+			border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+			color: var(--ink-2);
+			background: var(--surface);
+			font-weight: 500;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
 		}
 
 		/* ---- Buttons ---- */
@@ -178,7 +180,7 @@
 		/* ---- Cards / panels ---- */
 		.ui-card {
 			background: var(--surface);
-			border-radius: 18px;
+			border-radius: 40px;
 			box-shadow: var(--shadow);
 		}
 
@@ -398,7 +400,7 @@
 		/* ---- Paper Effect demo ---- */
 		.reader-screen {
 			position: relative;
-			border-radius: 18px;
+			border-radius: 24px;
 			overflow: hidden;
 			background: #26262a;
 			padding: 20px;
@@ -876,20 +878,19 @@
 		<!-- ============ HERO ============ -->
 		<section class="relative overflow-hidden">
 			<div class="hero-bg absolute inset-0"></div>
-			<div class="relative mx-auto max-w-6xl px-5 sm:px-8 pt-16 sm:pt-24 pb-14 sm:pb-20">
-				<div class="grid lg:grid-cols-[1.05fr_.95fr] gap-12 lg:gap-10 items-center">
-					<div class="reveal text-center lg:text-left">
+			<div class="relative mx-auto max-w-6xl px-5 sm:px-8 pt-16 sm:pt-24 pb-14 sm:pb-20 text-center">
+				<div class="reveal max-w-3xl mx-auto">
 						<img src="assets/appicon.png" alt="Paper Comic Reader app icon"
-							class="w-20 h-20 lg:w-32 lg:h-32 rounded-[23%] shadow-lg mx-auto lg:mx-0" />
+							class="w-24 h-24 lg:w-32 lg:h-32 rounded-[23%] shadow-lg mx-auto" />
 						<h1
 							class="font-display font-extrabold mt-6 text-[clamp(2.4rem,6vw,4.3rem)] leading-[1.02] tracking-tight text-balance">
 							Comics that read like <span class="mark">paper</span>, not a backlit screen.
 						</h1>
-						<p class="mt-6 mx-auto lg:mx-0 max-w-[48ch] text-[1.12rem] leading-relaxed" style="color:var(--ink-2)">
+						<p class="mt-6 mx-auto max-w-[52ch] text-[1.12rem] leading-relaxed" style="color:var(--ink-2)">
 							Paper Comic Reader is a lean, native reader that renders every page with a real paper look —
 							warm tone, fine grain, ink that shows through. Your whole collection, private and on-device.
 						</p>
-						<div class="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+						<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
 							<a data-appstore href="#download"
 								class="btn-dark inline-flex items-center gap-2.5 rounded-full pl-4 pr-3 h-[3.1rem] text-[.98rem] font-semibold">
 								<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -911,7 +912,7 @@
 								Get the .ipa
 							</a>
 						</div>
-						<p class="mt-5 text-[.9rem] flex items-center justify-center lg:justify-start gap-2"
+						<p class="mt-5 text-[.9rem] flex items-center justify-center gap-2"
 							style="color:var(--muted)">
 							<svg class="w-4 h-4" style="color:var(--pos)" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -920,20 +921,9 @@
 							</svg>
 							No accounts. No tracking. Everything runs on your device.
 						</p>
-					</div>
-					<!-- iPhone frame: the paper reader -->
-					<div class="reveal d1 flex justify-center lg:justify-end">
-						<div class="iphone w-[15.5rem] sm:w-[17rem]">
-							<span class="island"></span>
-							<div class="screen">
-								<img src="assets/img/5-paper.png" alt="Paper Comic Reader showing a page with the paper effect"
-									width="780" height="1689" loading="eager" />
-							</div>
-						</div>
-					</div>
 				</div>
 				<!-- trust pills -->
-				<div class="reveal d2 mt-12 sm:mt-16 flex flex-wrap items-center justify-center gap-2.5 text-[.82rem]">
+				<div class="mt-10 sm:mt-12 flex flex-wrap items-center justify-center gap-2.5 text-[.82rem]">
 					<span class="pill rounded-full px-3.5 py-1.5">Native SwiftUI &amp; Metal</span>
 					<span class="pill rounded-full px-3.5 py-1.5">120 Hz ProMotion reader</span>
 					<span class="pill rounded-full px-3.5 py-1.5">CBZ · on-device</span>
@@ -1537,7 +1527,7 @@
 						app.</h2>
 				</div>
 			</div>
-			<div class="gal-scroll flex gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-8 pt-8 pb-10">
+			<div class="gal-scroll flex gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-8 pt-16 pb-16">
 				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/1-recents.png"
 					data-caption="Recents"><img src="assets/img/1-recents.png" alt="Recents — continue reading" width="780"
 						height="1689" loading="lazy" /></figure>
@@ -1561,7 +1551,7 @@
 
 		<!-- ============ DOWNLOAD ============ -->
 		<section id="download" class="px-5 sm:px-8 py-16 sm:py-24">
-			<div class="reveal relative mx-auto max-w-6xl rounded-[2rem] overflow-hidden text-center px-6 py-16 sm:py-24"
+			<div class="reveal relative mx-auto max-w-6xl rounded-[2.5rem] overflow-hidden text-center px-6 py-16 sm:py-24"
 				style="background:linear-gradient(135deg,var(--accent),var(--accent-2))">
 				<div class="absolute inset-0 opacity-40"
 					style="background:radial-gradient(60% 80% at 50% 0%,rgba(255,255,255,.6),transparent)"></div>
@@ -1627,7 +1617,7 @@
 							One-time or monthly, entirely as you like. The app stays free and open for everyone either way.
 						</p>
 					</div>
-					<div class="reveal d1 relative rounded-3xl p-8 sm:p-10 overflow-hidden"
+					<div class="reveal d1 relative rounded-[2.5rem] p-8 sm:p-10 overflow-hidden"
 						style="background:var(--surface);border:1px solid color-mix(in srgb,var(--accent-2) 45%,var(--hair));box-shadow:var(--shadow)">
 						<div class="absolute inset-x-0 top-0 h-1"
 							style="background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div>
