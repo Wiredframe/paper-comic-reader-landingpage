@@ -1,0 +1,13 @@
+{
+  "name": "paper-comic-reader-landingpage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page for Paper Comic Reader — a lean, native iPhone & iPad comic reader that makes pages read like ink on paper.",
+  "scripts": {
+    "build:css": "tailwindcss -i src/input.css -o assets/tailwind.css --minify",
+    "watch:css": "tailwindcss -i src/input.css -o assets/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Paper Comic Reader — comics that read like paper, on iPhone &amp; iPad</title>
+	<meta name="description"
+		content="A lean, native comic reader for iPhone and iPad that renders every page with a real paper effect — warm tone, fine grain, ink that shows through. Stream your whole CBZ collection from a folder, keep visual bookmarks, browse by cover art. Free, open source, and completely on-device." />
+	<link rel="icon" type="image/png" href="assets/appicon.png" />
+	<link rel="apple-touch-icon" href="assets/appicon.png" />
+	<meta name="theme-color" content="#f5f5f7" />
+	<meta property="og:title" content="Paper Comic Reader" />
+	<meta property="og:description"
+		content="Comics that read like paper, not a backlit screen. A lean, native, private comic reader for iPhone &amp; iPad." />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="assets/appicon.png" />
+	<!-- Design system is inline; Tailwind (utilities) is precompiled to assets/tailwind.css and linked AFTER,
+	     so utilities win cascade ties. Build: npm run build:css -->
+	<style>
+		:root {
+			--bg: #f5f5f7;
+			--bg-2: #ececef;
+			--surface: #ffffff;
+			--surface-2: #fafafc;
+			--ink: #1d1d1f;
+			--ink-2: #3a3a3e;
+			--muted: #6e6e73;
+			--hair: rgba(0, 0, 0, .09);
+			--accent: #FEF12D;
+			/* bright icon / dark-theme yellow — fills, highlight, CTA */
+			--accent-2: #FFBB00;
+			/* gold — thin accents that must read on white */
+			--accent-ink: #866a00;
+			/* deep gold — icon glyphs / small accent text on light */
+			--accent-soft: color-mix(in srgb, #FFBB00 15%, transparent);
+			--pos: #128a5c;
+			--neg: #c0392f;
+			--paper: #f2e7cf;
+			/* cream paper */
+			--shadow: 0 30px 60px -24px rgba(28, 28, 40, .28), 0 8px 24px -16px rgba(28, 28, 40, .2);
+			--shadow-soft: 0 14px 34px -18px rgba(15, 18, 42, .34);
+			--pan-gutter: 1.25rem;
+			--pan-shadow-room: 1.75rem;
+		}
+
+		html {
+			scroll-padding-top: 5.5rem;
+			overflow-x: clip;
+		}
+
+		body {
+			background: var(--bg);
+			color: var(--ink);
+			font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		::selection {
+			background: color-mix(in srgb, var(--accent) 55%, transparent);
+		}
+
+		.font-display {
+			letter-spacing: -0.022em;
+		}
+
+		.num {
+			font-variant-numeric: tabular-nums;
+			letter-spacing: -0.005em;
+		}
+
+		.eyebrow {
+			font-size: .74rem;
+			line-height: 1;
+			font-weight: 600;
+			letter-spacing: .15em;
+			text-transform: uppercase;
+			color: var(--muted);
+			display: inline-flex;
+			align-items: center;
+			gap: .55rem;
+		}
+
+		.eyebrow::before {
+			content: "";
+			width: 1.4rem;
+			height: 2px;
+			border-radius: 2px;
+			background: var(--accent-2);
+		}
+
+		/* highlighter behind the hero keyword */
+		.mark {
+			background: linear-gradient(180deg, transparent 56%, color-mix(in srgb, var(--accent) 90%, transparent) 56%);
+			padding: 0 .05em;
+			border-radius: .06em;
+		}
+
+		.hairline {
+			border-color: var(--hair);
+		}
+
+		.pill {
+			border: 1px solid var(--hair);
+			color: var(--muted);
+			background: color-mix(in srgb, var(--surface) 60%, transparent);
+		}
+
+		/* ---- Buttons ---- */
+		.btn-primary {
+			background: var(--accent);
+			color: #1a1a1a;
+			font-weight: 600;
+			box-shadow: 0 10px 26px -12px color-mix(in srgb, var(--accent-2) 85%, transparent);
+		}
+
+		.btn-primary:hover {
+			filter: brightness(1.03) saturate(1.04);
+		}
+
+		.btn-dark {
+			background: var(--ink);
+			color: #fff;
+		}
+
+		.btn-dark:hover {
+			filter: brightness(1.18);
+		}
+
+		.btn-ghost {
+			border: 1px solid var(--hair);
+			color: var(--ink);
+			background: color-mix(in srgb, var(--surface) 70%, transparent);
+		}
+
+		.btn-ghost:hover {
+			border-color: color-mix(in srgb, var(--accent-2) 55%, var(--hair));
+		}
+
+		a,
+		button {
+			transition: color .18s, background-color .18s, border-color .18s, filter .18s, transform .18s;
+		}
+
+		:focus-visible {
+			outline: 2px solid var(--accent-2);
+			outline-offset: 3px;
+			border-radius: 6px;
+		}
+
+		/* ---- Scroll reveals (progressive enhancement; visible by default) ---- */
+		.reveal {
+			opacity: 1;
+		}
+
+		@keyframes reveal-up {
+			from {
+				opacity: 0;
+				transform: translateY(34px);
+			}
+
+			to {
+				opacity: 1;
+				transform: none;
+			}
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			@supports (animation-timeline: view()) {
+				.reveal {
+					animation: reveal-up both linear;
+					animation-timeline: view();
+					animation-range: entry 2% cover 26%;
+				}
+
+				.reveal.d1 {
+					animation-range: entry 7% cover 31%;
+				}
+
+				.reveal.d2 {
+					animation-range: entry 12% cover 36%;
+				}
+
+				.reveal.d3 {
+					animation-range: entry 17% cover 41%;
+				}
+			}
+		}
+
+		/* ---- Cards / panels ---- */
+		.ui-card {
+			background: var(--surface);
+			border-radius: 18px;
+			box-shadow: var(--shadow);
+		}
+
+		.ui-hover {
+			transition: transform .4s cubic-bezier(.2, .7, .2, 1), box-shadow .4s ease;
+		}
+
+		@media (hover: hover) and (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+			.ui-hover:hover {
+				transform: translateY(-6px);
+				box-shadow: 0 42px 72px -30px rgba(12, 14, 32, .4);
+			}
+		}
+
+		.ic-badge {
+			display: grid;
+			place-items: center;
+			width: 2.5rem;
+			height: 2.5rem;
+			border-radius: .7rem;
+			background: var(--accent-soft);
+			color: var(--accent-ink);
+			flex: none;
+		}
+
+		/* ---- Segmented control + chips ---- */
+		.seg {
+			background: var(--bg-2);
+			border-radius: 11px;
+			padding: 3px;
+			display: inline-flex;
+			gap: 2px;
+		}
+
+		.seg-btn {
+			font-size: .78rem;
+			font-weight: 600;
+			padding: .34rem .72rem;
+			border-radius: 8px;
+			color: var(--muted);
+			cursor: pointer;
+			border: 0;
+			background: transparent;
+			white-space: nowrap;
+		}
+
+		.seg-btn.on {
+			background: var(--surface);
+			color: var(--ink);
+			box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+		}
+
+		.chip {
+			font-size: .72rem;
+			font-weight: 600;
+			padding: .32rem .62rem;
+			border-radius: 999px;
+			border: 1px solid var(--hair);
+			background: var(--surface);
+			color: var(--ink-2);
+			cursor: pointer;
+		}
+
+		.chip.on {
+			background: var(--accent);
+			border-color: transparent;
+			color: #1a1a1a;
+		}
+
+		/* ---- iPhone frame (hero) ---- */
+		.iphone {
+			position: relative;
+			border-radius: 46px;
+			background: linear-gradient(150deg, #202027, #0e0e12);
+			padding: 9px;
+			box-shadow: 0 44px 90px -34px rgba(20, 20, 35, .6), 0 8px 24px -14px rgba(0, 0, 0, .4);
+		}
+
+		.iphone .screen {
+			position: relative;
+			border-radius: 38px;
+			overflow: hidden;
+			background: #000;
+			box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+		}
+
+		.iphone .screen img {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+
+		.iphone .island {
+			position: absolute;
+			top: 2.6%;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 30%;
+			max-width: 116px;
+			height: 22px;
+			background: #000;
+			border-radius: 14px;
+			z-index: 3;
+		}
+
+		/* ---- Cover tiles ---- */
+		.cover {
+			position: relative;
+			aspect-ratio: 2 / 3;
+			border-radius: 10px;
+			overflow: hidden;
+			box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .45);
+			color: #fff;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			padding: .5rem;
+			isolation: isolate;
+		}
+
+		.cover::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, rgba(255, 255, 255, .18), transparent 34%, rgba(0, 0, 0, .38));
+			z-index: 1;
+		}
+
+		.cover .ct {
+			position: relative;
+			z-index: 2;
+			font-weight: 800;
+			font-size: .78rem;
+			line-height: 1.02;
+			letter-spacing: -.01em;
+			text-shadow: 0 1px 4px rgba(0, 0, 0, .5);
+		}
+
+		.cover .cs {
+			position: relative;
+			z-index: 2;
+			font-size: .58rem;
+			opacity: .9;
+			margin-top: .12rem;
+			font-weight: 600;
+		}
+
+		.badge {
+			position: absolute;
+			top: .38rem;
+			right: .38rem;
+			z-index: 3;
+			width: 1.45rem;
+			height: 1.45rem;
+			border-radius: 50%;
+			display: grid;
+			place-items: center;
+			background: rgba(0, 0, 0, .55);
+			-webkit-backdrop-filter: blur(4px);
+			backdrop-filter: blur(4px);
+			color: #fff;
+			border: 0;
+			cursor: pointer;
+		}
+
+		.badge svg {
+			width: .82rem;
+			height: .82rem;
+		}
+
+		.cover.downloaded .badge {
+			background: var(--pos);
+			cursor: default;
+		}
+
+		.cover .badge .ic-check {
+			display: none;
+		}
+
+		.cover.downloaded .badge .ic-cloud {
+			display: none;
+		}
+
+		.cover.downloaded .badge .ic-check {
+			display: block;
+		}
+
+		.cover.downloading .badge {
+			background: rgba(0, 0, 0, .55);
+		}
+
+		.cover.downloading .badge svg {
+			display: none;
+		}
+
+		.spinner {
+			width: .8rem;
+			height: .8rem;
+			border: 2px solid rgba(255, 255, 255, .35);
+			border-top-color: #fff;
+			border-radius: 50%;
+			animation: spin .7s linear infinite;
+		}
+
+		@keyframes spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		.grid-covers.only-dl .cover:not(.downloaded) {
+			opacity: .12;
+			pointer-events: none;
+			filter: grayscale(1);
+		}
+
+		/* ---- Paper Effect demo ---- */
+		.reader-screen {
+			position: relative;
+			border-radius: 18px;
+			overflow: hidden;
+			background: #26262a;
+			padding: 20px;
+			transition: background .55s ease;
+		}
+
+		.reader-screen.paper-on {
+			background: #332b21;
+		}
+
+		.reader-chrome {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 .1rem .6rem;
+			color: rgba(255, 255, 255, .8);
+			font-size: .66rem;
+			font-weight: 600;
+		}
+
+		.comic-page {
+			position: relative;
+			border-radius: 6px;
+			overflow: hidden;
+			aspect-ratio: 3 / 4;
+			background: #fff;
+			--warmth: .72;
+			--grain: .5;
+			--show: .5;
+			--lift: .35;
+			transition: background .55s ease;
+		}
+
+		.reader-screen.paper-on .comic-page {
+			background: var(--paper);
+		}
+
+		.comic-page .art {
+			position: absolute;
+			inset: 0;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: 1.3fr 1fr 1.1fr;
+			gap: 5px;
+			padding: 5px;
+			transition: filter .55s ease;
+		}
+
+		.reader-screen.paper-on .comic-page .art {
+			filter: sepia(calc(var(--warmth) * .6)) contrast(.93) brightness(calc(1 + var(--lift) * .06)) saturate(.88);
+		}
+
+		.pnl {
+			position: relative;
+			overflow: hidden;
+			border-radius: 3px;
+			background: #ddd;
+		}
+
+		.pnl.wide {
+			grid-column: 1 / 3;
+		}
+
+		.p-sky {
+			background: linear-gradient(165deg, #7fa8d8 0%, #eab98d 88%);
+		}
+
+		.sun {
+			position: absolute;
+			top: 12%;
+			right: 12%;
+			width: 24%;
+			aspect-ratio: 1;
+			border-radius: 50%;
+			background: radial-gradient(circle at 50% 50%, #fff4b0, #ffd23e 72%);
+			box-shadow: 0 0 22px 5px rgba(255, 210, 62, .5);
+		}
+
+		.silh {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 44%;
+			background: #1b2330;
+			clip-path: polygon(0 62%, 16% 34%, 30% 56%, 48% 20%, 66% 52%, 82% 30%, 100% 54%, 100% 100%, 0 100%);
+		}
+
+		.p-halftone {
+			background: #f0d24a;
+			background-image: radial-gradient(circle, rgba(20, 20, 20, .55) 1.1px, transparent 1.4px);
+			background-size: 7px 7px;
+		}
+
+		.slash {
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(115deg, transparent 40%, #c0303a 40%, #c0303a 60%, transparent 60%);
+		}
+
+		.ink-line {
+			position: absolute;
+			left: 12%;
+			right: 12%;
+			bottom: 20%;
+			height: 2px;
+			background: #14141a;
+			opacity: .8;
+		}
+
+		.p-white {
+			background: #fbf7ee;
+		}
+
+		.bubble {
+			position: absolute;
+			inset: 15% 13% 20%;
+			background: #fff;
+			border: 2px solid #17171b;
+			border-radius: 50% / 44%;
+			display: grid;
+			place-items: center;
+			font-weight: 900;
+			font-size: .6rem;
+			letter-spacing: .01em;
+			color: #17171b;
+			text-align: center;
+		}
+
+		.bubble::after {
+			content: "";
+			position: absolute;
+			bottom: -14%;
+			left: 30%;
+			width: 22%;
+			height: 26%;
+			background: #fff;
+			border-right: 2px solid #17171b;
+			border-bottom: 2px solid #17171b;
+			transform: rotate(20deg) skewX(-10deg);
+		}
+
+		.p-dark {
+			background: #15161b;
+		}
+
+		.streak {
+			position: absolute;
+			inset: 0;
+			background-image: repeating-linear-gradient(74deg, rgba(255, 255, 255, .16) 0 2px, transparent 2px 13px);
+		}
+
+		.p-dark .dot {
+			position: absolute;
+			top: 38%;
+			left: 44%;
+			width: 11%;
+			aspect-ratio: 1;
+			border-radius: 50%;
+			background: var(--accent);
+			box-shadow: 0 0 14px 3px rgba(254, 241, 45, .5);
+		}
+
+		/* paper overlays */
+		.ov {
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity .55s ease;
+		}
+
+		.paper-cool {
+			background: linear-gradient(180deg, rgba(176, 208, 255, .34), rgba(202, 222, 255, .2));
+			mix-blend-mode: screen;
+			opacity: .5;
+		}
+
+		.reader-screen.paper-on .paper-cool {
+			opacity: 0;
+		}
+
+		.paper-warm {
+			background: var(--paper);
+			mix-blend-mode: multiply;
+		}
+
+		.reader-screen.paper-on .paper-warm {
+			opacity: calc(var(--warmth) * .8);
+		}
+
+		.paper-grain {
+			inset: -25%;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+			background-size: 150px 150px;
+			mix-blend-mode: multiply;
+		}
+
+		.reader-screen.paper-on .paper-grain {
+			opacity: calc(var(--grain) * .9);
+		}
+
+		.paper-show {
+			background: radial-gradient(120% 82% at 32% 22%, rgba(255, 248, 224, .55), transparent 62%);
+			mix-blend-mode: screen;
+		}
+
+		.reader-screen.paper-on .paper-show {
+			opacity: var(--show);
+		}
+
+		/* sliders */
+		.slider {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 100%;
+			height: 4px;
+			border-radius: 3px;
+			background: var(--bg-2);
+			outline: none;
+		}
+
+		.slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background: var(--ink);
+			cursor: pointer;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+		}
+
+		.slider::-moz-range-thumb {
+			width: 15px;
+			height: 15px;
+			border: 0;
+			border-radius: 50%;
+			background: var(--ink);
+			cursor: pointer;
+		}
+
+		/* ---- Bookmark ribbon ---- */
+		.bm-btn {
+			display: inline-grid;
+			place-items: center;
+			width: 2.2rem;
+			height: 2.2rem;
+			border-radius: 999px;
+			border: 1px solid var(--hair);
+			background: var(--surface);
+			color: var(--muted);
+			cursor: pointer;
+		}
+
+		.bm-btn.on {
+			background: var(--accent);
+			border-color: transparent;
+			color: #1a1a1a;
+		}
+
+		.bm-btn.on svg {
+			fill: #1a1a1a;
+		}
+
+		/* ---- Carousel deck ---- */
+		.deck {
+			position: relative;
+			height: 12.5rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.deck .cover {
+			transition: transform .5s cubic-bezier(.2, .7, .2, 1), opacity .5s ease;
+		}
+
+		.deck .c-center {
+			width: 7.4rem;
+			z-index: 3;
+		}
+
+		.deck .c-side {
+			position: absolute;
+			width: 6.2rem;
+			opacity: .55;
+			z-index: 1;
+		}
+
+		.deck .c-left {
+			transform: translateX(-72%) scale(.86);
+		}
+
+		.deck .c-right {
+			transform: translateX(72%) scale(.86);
+		}
+
+		.deck.slide .c-center {
+			animation: deckin .5s cubic-bezier(.2, .7, .2, 1);
+		}
+
+		@keyframes deckin {
+			from {
+				opacity: .2;
+				transform: translateX(26%) scale(.9);
+			}
+
+			to {
+				opacity: 1;
+				transform: none;
+			}
+		}
+
+		/* ---- Gallery ---- */
+		.gal-scroll {
+			scrollbar-width: none;
+			scroll-padding-inline: 1.25rem;
+		}
+
+		.gal-scroll::-webkit-scrollbar {
+			display: none;
+		}
+
+		.shot {
+			border-radius: 26px;
+			background: #101014;
+			padding: 5px;
+			box-shadow: var(--shadow);
+			cursor: zoom-in;
+			transition: transform .35s cubic-bezier(.2, .7, .2, 1);
+		}
+
+		.shot img {
+			display: block;
+			width: 100%;
+			height: auto;
+			border-radius: 22px;
+		}
+
+		@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+			.shot:hover {
+				transform: translateY(-6px);
+			}
+		}
+
+		@media (max-width: 767px) {
+			.shot {
+				cursor: default;
+			}
+		}
+
+		/* lightbox */
+		#lightbox {
+			display: flex;
+			visibility: hidden;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity .22s ease, visibility 0s linear .22s;
+		}
+
+		#lightbox.open {
+			visibility: visible;
+			opacity: 1;
+			pointer-events: auto;
+			transition: opacity .22s ease;
+		}
+
+		.lb-backdrop {
+			background: color-mix(in srgb, var(--bg) 70%, #000);
+			-webkit-backdrop-filter: blur(10px);
+			backdrop-filter: blur(10px);
+		}
+
+		#lb-img {
+			transform: scale(.96);
+			transition: transform .26s cubic-bezier(.2, .7, .2, 1);
+		}
+
+		#lightbox.open #lb-img {
+			transform: scale(1);
+		}
+
+		#lb-close {
+			background: color-mix(in srgb, var(--surface) 85%, transparent);
+			border: 1px solid var(--hair);
+			color: var(--ink);
+		}
+
+		/* ---- FAQ ---- */
+		details.faq {
+			border-bottom: 1px solid var(--hair);
+		}
+
+		details.faq summary {
+			list-style: none;
+			cursor: pointer;
+		}
+
+		details.faq summary::-webkit-details-marker {
+			display: none;
+		}
+
+		details.faq summary .chev {
+			transition: transform .25s ease;
+		}
+
+		details.faq[open] summary .chev {
+			transform: rotate(45deg);
+		}
+
+		/* ---- Hero bg ---- */
+		.hero-bg {
+			background:
+				radial-gradient(120% 72% at 14% -2%, rgba(254, 241, 45, .38), transparent 55%),
+				radial-gradient(96% 68% at 92% 4%, rgba(255, 187, 0, .22), transparent 55%),
+				linear-gradient(180deg, #fffdf0 0%, var(--bg) 62%);
+		}
+
+		/* ---- App Store "coming soon" tag ---- */
+		.soon-tag {
+			font-size: .58rem;
+			font-weight: 700;
+			letter-spacing: .04em;
+			text-transform: uppercase;
+			padding: .12rem .38rem;
+			border-radius: 999px;
+			background: color-mix(in srgb, var(--accent) 85%, #000 4%);
+			color: #1a1a1a;
+		}
+
+		/* ---- Mobile horizontal pan for wide panels ---- */
+		@media (min-width: 640px) {
+			:root {
+				--pan-gutter: 2rem;
+			}
+		}
+
+		@media (max-width: 767px) {
+
+			.ui-card {
+				box-shadow: var(--shadow-soft);
+			}
+
+			.reveal {
+				min-width: 0;
+			}
+
+			.pan-x {
+				min-width: 0;
+				overflow-x: auto;
+				overflow-y: visible;
+				-webkit-overflow-scrolling: touch;
+				scrollbar-width: none;
+				margin-block: calc(var(--pan-shadow-room) * -1);
+				margin-inline: calc(var(--pan-gutter) * -1);
+				padding-block: var(--pan-shadow-room);
+				padding-inline: var(--pan-gutter);
+			}
+
+			.pan-x::-webkit-scrollbar {
+				display: none;
+			}
+
+			.pan-x>.ui-card {
+				min-width: 25rem;
+			}
+		}
+	</style>
+	<link rel="stylesheet" href="assets/tailwind.css" />
+</head>
+
+<body class="font-sans antialiased">
+	<!-- ============ HEADER ============ -->
+	<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl"
+		style="background:color-mix(in srgb,var(--bg) 72%,transparent);border-bottom:1px solid var(--hair)">
+		<div class="mx-auto max-w-6xl px-5 sm:px-8 h-[4.25rem] flex items-center justify-between gap-4">
+			<a href="#top" class="flex items-center gap-2.5 shrink-0">
+				<img src="assets/appicon.png" alt="Paper Comic Reader app icon" class="w-8 h-8 rounded-[9px] shadow-sm" />
+				<span class="font-display text-[1.24rem] font-bold tracking-tight">Paper Comic Reader</span>
+			</a>
+			<nav class="hidden lg:flex items-center gap-8 text-[.92rem]" style="color:var(--ink-2)">
+				<a href="#paper" class="hover:opacity-70">Paper Effect</a>
+				<a href="#features" class="hover:opacity-70">Features</a>
+				<a href="#privacy" class="hover:opacity-70">Privacy</a>
+				<a href="#download" class="hover:opacity-70">Download</a>
+			</nav>
+			<a href="#download"
+				class="btn-primary hidden sm:inline-flex items-center gap-2 rounded-full px-4 h-10 text-[.9rem] font-semibold">
+				Get the app<span class="opacity-70 font-normal hidden md:inline"> · Free</span>
+			</a>
+		</div>
+	</header>
+
+	<main id="top">
+		<!-- ============ HERO ============ -->
+		<section class="relative overflow-hidden">
+			<div class="hero-bg absolute inset-0"></div>
+			<div class="relative mx-auto max-w-6xl px-5 sm:px-8 pt-28 sm:pt-36 pb-14 sm:pb-20">
+				<div class="grid lg:grid-cols-[1.05fr_.95fr] gap-12 lg:gap-10 items-center">
+					<div class="reveal text-center lg:text-left">
+						<span class="eyebrow justify-center lg:justify-start">Free · Open source · iPhone &amp; iPad</span>
+						<h1
+							class="font-display font-extrabold mt-5 text-[clamp(2.4rem,6vw,4.3rem)] leading-[1.02] tracking-tight text-balance">
+							Comics that read like <span class="mark">paper</span>, not a backlit screen.
+						</h1>
+						<p class="mt-6 mx-auto lg:mx-0 max-w-[48ch] text-[1.12rem] leading-relaxed" style="color:var(--ink-2)">
+							Paper Comic Reader is a lean, native reader that renders every page with a real paper look —
+							warm tone, fine grain, ink that shows through. Your whole collection, private and on-device.
+						</p>
+						<div class="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+							<a data-appstore href="#download"
+								class="btn-dark inline-flex items-center gap-2.5 rounded-full pl-4 pr-3 h-[3.1rem] text-[.98rem] font-semibold">
+								<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+									<path
+										d="M16.365 1.43c0 1.14-.42 2.2-1.13 2.98-.79.87-2.06 1.54-3.14 1.46-.14-1.1.44-2.26 1.09-2.98.75-.83 2.09-1.45 3.18-1.46zM20.9 17.16c-.56 1.3-.83 1.88-1.55 3.03-1 1.62-2.43 3.63-4.2 3.64-1.57.02-1.97-1.01-4.1-1-2.13.01-2.57 1.02-4.14 1.01-1.77-.02-3.12-1.83-4.12-3.44-2.87-4.05-3.17-8.79-1.4-11.29.97-1.38 2.5-2.26 3.94-2.26 1.47 0 2.4.99 4.1.99 1.4 0 2.24-.99 4.11-.99 1.31 0 2.7.71 3.7 1.94-3.25 1.78-2.72 6.42.68 7.36z" />
+								</svg>
+								<span class="text-left leading-none">
+									<span class="block text-[.62rem] font-normal opacity-80">Download on the</span>
+									<span class="block text-[1.02rem] -mt-px">App Store</span>
+								</span>
+								<span class="soon-tag ml-1">Soon</span>
+							</a>
+							<a href="https://github.com/Wiredframe/paper-comic-reader/releases" target="_blank" rel="noopener"
+								class="btn-ghost inline-flex items-center gap-2 rounded-full px-5 h-[3.1rem] text-[.98rem] font-semibold">
+								<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+									stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+								</svg>
+								Get the .ipa
+							</a>
+						</div>
+						<p class="mt-5 text-[.9rem] flex items-center justify-center lg:justify-start gap-2"
+							style="color:var(--muted)">
+							<svg class="w-4 h-4" style="color:var(--pos)" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M9 12l2 2 4-4" />
+								<circle cx="12" cy="12" r="9" />
+							</svg>
+							No accounts. No tracking. Everything runs on your device.
+						</p>
+					</div>
+					<!-- iPhone frame: the paper reader -->
+					<div class="reveal d1 flex justify-center lg:justify-end">
+						<div class="iphone w-[15.5rem] sm:w-[17rem]">
+							<span class="island"></span>
+							<div class="screen">
+								<img src="assets/img/5-paper.png" alt="Paper Comic Reader showing a page with the paper effect"
+									width="780" height="1689" loading="eager" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- trust pills -->
+				<div class="reveal d2 mt-12 sm:mt-16 flex flex-wrap items-center justify-center gap-2.5 text-[.82rem]">
+					<span class="pill rounded-full px-3.5 py-1.5">Native SwiftUI &amp; Metal</span>
+					<span class="pill rounded-full px-3.5 py-1.5">120 Hz ProMotion reader</span>
+					<span class="pill rounded-full px-3.5 py-1.5">CBZ · on-device</span>
+					<span class="pill rounded-full px-3.5 py-1.5">iPhone &amp; iPad</span>
+					<span class="pill rounded-full px-3.5 py-1.5">Open source · MIT</span>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ PAPER EFFECT (signature) ============ -->
+		<section id="paper" class="py-20 sm:py-28" style="background:var(--surface)">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+					<div class="reveal max-w-xl">
+						<span class="eyebrow">The signature feature</span>
+						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
+							Ink on paper, not a glowing screen.
+						</h2>
+						<p class="mt-5 leading-relaxed text-[1.06rem]" style="color:var(--ink-2)">
+							Every page is re-rendered to read like it was printed. A warm tonal remap pulls harsh white toward
+							cream and lifts black to a soft, warm dark; a fine, even grain lays over the page; and a gentle
+							show-through lets the paper peek through the ink — like a real thin sheet.
+						</p>
+						<p class="mt-4 leading-relaxed" style="color:var(--muted)">
+							It runs on a Metal-accelerated Core Image pipeline, so it stays smooth. Pick a preset —
+							<strong style="color:var(--ink-2)">Cream, Newsprint, Manga</strong> or <strong
+								style="color:var(--ink-2)">E-Ink</strong> — or tune warmth, grain, show-through and black lift
+							yourself, with a live preview on the real page.
+						</p>
+						<div class="mt-6 flex flex-wrap gap-2.5 text-[.86rem]" style="color:var(--muted)">
+							<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full"
+									style="background:var(--accent-2)"></span> Easier on the eyes</span>
+							<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full"
+									style="background:var(--accent-2)"></span> GPU-accelerated</span>
+							<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full"
+									style="background:var(--accent-2)"></span> Tunable, live</span>
+						</div>
+					</div>
+					<!-- interactive demo -->
+					<div class="reveal d1 pan-x">
+						<div class="ui-card ui-hover p-4 sm:p-5">
+							<div class="flex items-center justify-between gap-3 mb-3">
+								<div class="seg" role="tablist" aria-label="Reading mode">
+									<button class="seg-btn" data-mode="screen" role="tab">Screen</button>
+									<button class="seg-btn on" data-mode="paper" role="tab">Paper</button>
+								</div>
+								<span class="text-[.7rem] font-semibold px-2 py-1 rounded-md"
+									style="background:var(--accent-soft);color:var(--accent-ink)">Live preview</span>
+							</div>
+							<div class="reader-screen paper-on" id="paperScreen">
+								<div class="reader-chrome">
+									<span>SolarFlare · #4</span>
+									<span class="num">12 / 48</span>
+								</div>
+								<div class="comic-page" id="comicPage">
+									<div class="art">
+										<div class="pnl wide p-sky">
+											<span class="sun"></span>
+											<span class="silh"></span>
+										</div>
+										<div class="pnl p-halftone">
+											<span class="slash"></span>
+											<span class="ink-line"></span>
+										</div>
+										<div class="pnl p-white">
+											<span class="bubble">KA-<br>POW!</span>
+										</div>
+										<div class="pnl wide p-dark">
+											<span class="streak"></span>
+											<span class="dot"></span>
+										</div>
+									</div>
+									<div class="ov paper-cool"></div>
+									<div class="ov paper-warm"></div>
+									<div class="ov paper-grain"></div>
+									<div class="ov paper-show"></div>
+								</div>
+							</div>
+							<!-- presets -->
+							<div class="mt-4 flex flex-wrap gap-2">
+								<button class="chip on" data-preset="cream">Cream</button>
+								<button class="chip" data-preset="newsprint">Newsprint</button>
+								<button class="chip" data-preset="manga">Manga</button>
+								<button class="chip" data-preset="eink">E-Ink</button>
+							</div>
+							<!-- sliders -->
+							<div class="mt-4 grid grid-cols-2 gap-x-5 gap-y-3">
+								<label class="text-[.74rem] font-semibold" style="color:var(--muted)">Warmth
+									<input type="range" class="slider mt-1.5" min="0" max="100" value="72" data-var="warmth" />
+								</label>
+								<label class="text-[.74rem] font-semibold" style="color:var(--muted)">Grain
+									<input type="range" class="slider mt-1.5" min="0" max="100" value="50" data-var="grain" />
+								</label>
+								<label class="text-[.74rem] font-semibold" style="color:var(--muted)">Show-through
+									<input type="range" class="slider mt-1.5" min="0" max="100" value="50" data-var="show" />
+								</label>
+								<label class="text-[.74rem] font-semibold" style="color:var(--muted)">Black lift
+									<input type="range" class="slider mt-1.5" min="0" max="100" value="35" data-var="lift" />
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ FOLDER STREAMING ============ -->
+		<section class="py-20 sm:py-28">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+					<!-- mockup (left on desktop) -->
+					<div class="reveal lg:order-1 order-2 pan-x">
+						<div class="ui-card ui-hover p-5">
+							<div class="flex items-center justify-between gap-3 mb-4">
+								<span class="inline-flex items-center gap-2 text-[.84rem] font-semibold">
+									<svg class="w-[18px] h-[18px]" style="color:var(--accent-ink)" viewBox="0 0 24 24" fill="none"
+										stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+									</svg>
+									Comics — Home NAS
+				</span>
+								<button id="onlyDl" class="chip" aria-pressed="false">Only downloaded</button>
+							</div>
+							<div class="grid-covers grid grid-cols-3 gap-3" id="folderGrid">
+								<!-- covers injected/marked with badges -->
+								<div class="cover" style="background:linear-gradient(150deg,#ff9d3c,#f0512b)">
+									<button class="badge" aria-label="Download">
+										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M12 13v8M8 17l4 4 4-4" />
+											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
+										</svg>
+										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M20 6 9 17l-5-5" />
+										</svg>
+									</button>
+									<span class="ct">SolarFlare</span><span class="cs">#4 · 2026</span>
+								</div>
+								<div class="cover downloaded" style="background:linear-gradient(150deg,#4b8fe6,#1f4fb0)">
+									<button class="badge" aria-label="Downloaded">
+										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M12 13v8M8 17l4 4 4-4" />
+											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
+										</svg>
+										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M20 6 9 17l-5-5" />
+										</svg>
+									</button>
+									<span class="ct">DeepBlue</span><span class="cs">#11 · 2025</span>
+								</div>
+								<div class="cover" style="background:linear-gradient(150deg,#e0596a,#9b1e3a)">
+									<button class="badge" aria-label="Download">
+										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M12 13v8M8 17l4 4 4-4" />
+											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
+										</svg>
+										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M20 6 9 17l-5-5" />
+										</svg>
+									</button>
+									<span class="ct">CrimsonAlley</span><span class="cs">#2 · 2026</span>
+								</div>
+								<div class="cover" style="background:linear-gradient(150deg,#3fca8e,#127a63)">
+									<button class="badge" aria-label="Download">
+										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M12 13v8M8 17l4 4 4-4" />
+											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
+										</svg>
+										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M20 6 9 17l-5-5" />
+										</svg>
+									</button>
+									<span class="ct">JadeCircuit</span><span class="cs">#7 · 2025</span>
+								</div>
+								<div class="cover downloaded" style="background:linear-gradient(150deg,#8b7bf0,#5330c4)">
+									<button class="badge" aria-label="Downloaded">
+										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M12 13v8M8 17l4 4 4-4" />
+											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
+										</svg>
+										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M20 6 9 17l-5-5" />
+										</svg>
+									</button>
+									<span class="ct">Midnight Mecha</span><span class="cs">#3 · 2026</span>
+								</div>
+								<div class="cover" style="background:linear-gradient(150deg,#caa15a,#7c5a25)">
+									<button class="badge" aria-label="Download">
+										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M12 13v8M8 17l4 4 4-4" />
+											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
+										</svg>
+										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+											stroke-linecap="round" stroke-linejoin="round">
+											<path d="M20 6 9 17l-5-5" />
+										</svg>
+									</button>
+									<span class="ct">Dust &amp; Iron</span><span class="cs">#1 · 2024</span>
+								</div>
+							</div>
+							<p class="mt-4 text-[.8rem] flex items-center gap-1.5" style="color:var(--muted)">
+								<span class="w-1.5 h-1.5 rounded-full" style="background:var(--pos)"></span>
+								<span id="dlCount">2</span> of 6 downloaded · tap a
+								<svg class="inline w-3.5 h-3.5 -mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+									stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 13v6M9 16l3 3 3-3M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
+								</svg> to download on demand
+							</p>
+						</div>
+					</div>
+					<!-- copy -->
+					<div class="reveal d1 lg:order-2 order-1 max-w-xl">
+						<span class="eyebrow">Your whole library, streamed</span>
+						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
+							Point it at a folder. Browse everything.
+						</h2>
+						<p class="mt-5 leading-relaxed text-[1.06rem]" style="color:var(--ink-2)">
+							Aim Paper Comic Reader at a folder on your NAS, file server, or iCloud Drive — anything the Files
+							app can reach. It scans and pulls in every comic's <strong style="color:var(--ink)">cover and
+								details right away</strong>, without copying the archives onto your phone.
+						</p>
+						<p class="mt-4 leading-relaxed" style="color:var(--muted)">
+							Each comic <strong style="color:var(--ink-2)">downloads when you open it</strong>, and you can
+							remove that download again to free space while the entry stays in your library. Availability badges
+							show what's local; an <em>Only Downloaded</em> filter hides the rest. Move the share? Update the
+							folder path once and your whole library re-links at once.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ BOOKMARKS ============ -->
+		<section class="py-20 sm:py-28" style="background:var(--surface)">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+					<!-- copy -->
+					<div class="reveal max-w-xl">
+						<span class="eyebrow">Never lose your place</span>
+						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
+							Bookmarks you can actually recognize.
+						</h2>
+						<p class="mt-5 leading-relaxed text-[1.06rem]" style="color:var(--ink-2)">
+							One tap while reading saves the page — and it stores <strong style="color:var(--ink)">a real
+								picture of that exact page</strong>, not just a number. Every bookmark from every comic collects
+							in one place, as a carousel, a thumbnail gallery, or a list.
+						</p>
+						<p class="mt-4 leading-relaxed" style="color:var(--muted)">
+							Tap any bookmark to jump straight back to that page. Sort by date, comic or page, and search across
+							your whole library. Bookmarks are durable: they survive removing a download — only deleting the
+							comic clears them.
+						</p>
+					</div>
+					<!-- mockup -->
+					<div class="reveal d1 pan-x">
+						<div class="ui-card ui-hover p-5">
+							<div class="flex items-center justify-between gap-3 mb-4">
+								<div class="flex items-center gap-2.5">
+									<button class="bm-btn on" id="bmBtn" aria-pressed="true" aria-label="Bookmark this page">
+										<svg class="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+											<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
+										</svg>
+									</button>
+									<span class="text-[.84rem] font-semibold" id="bmLabel">Page bookmarked</span>
+								</div>
+								<div class="seg">
+									<button class="seg-btn on">Date</button>
+									<button class="seg-btn">Comic</button>
+									<button class="seg-btn">Page</button>
+								</div>
+							</div>
+							<div class="flex items-center gap-2 mb-4 rounded-xl px-3 h-9"
+								style="background:var(--bg-2);color:var(--muted)">
+								<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+									stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="11" cy="11" r="7" />
+									<path d="m21 21-4.3-4.3" />
+								</svg>
+								<span class="text-[.82rem]">Search bookmarks</span>
+							</div>
+							<div class="grid grid-cols-3 gap-3">
+								<figure class="rounded-xl overflow-hidden" style="border:1px solid var(--hair)">
+									<div class="cover" style="background:linear-gradient(150deg,#ff9d3c,#f0512b);border-radius:0">
+										<span class="ct">SolarFlare</span>
+									</div>
+									<figcaption class="px-2 py-1.5 text-[.66rem] font-semibold num" style="color:var(--muted)">p. 12
+									</figcaption>
+								</figure>
+								<figure class="rounded-xl overflow-hidden" style="border:1px solid var(--hair)">
+									<div class="cover" style="background:linear-gradient(150deg,#3fca8e,#127a63);border-radius:0">
+										<span class="ct">JadeCircuit</span>
+									</div>
+									<figcaption class="px-2 py-1.5 text-[.66rem] font-semibold num" style="color:var(--muted)">p. 30
+									</figcaption>
+								</figure>
+								<figure class="rounded-xl overflow-hidden" style="border:1px solid var(--hair)">
+									<div class="cover" style="background:linear-gradient(150deg,#8b7bf0,#5330c4);border-radius:0">
+										<span class="ct">Midnight Mecha</span>
+									</div>
+									<figcaption class="px-2 py-1.5 text-[.66rem] font-semibold num" style="color:var(--muted)">p. 7
+									</figcaption>
+								</figure>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ DISCOVER CAROUSEL + SHUFFLE ============ -->
+		<section class="py-20 sm:py-28">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+					<!-- mockup (left) -->
+					<div class="reveal lg:order-1 order-2 pan-x">
+						<div class="ui-card ui-hover p-5">
+							<div class="flex items-center justify-between gap-3 mb-2">
+								<div class="seg" id="discFilters">
+									<button class="seg-btn on" data-filter="all">Discover</button>
+									<button class="seg-btn" data-filter="popular">Popular</button>
+									<button class="seg-btn" data-filter="dust">Gathering Dust</button>
+								</div>
+								<button id="shuffleBtn" class="btn-primary inline-flex items-center gap-1.5 rounded-full px-3 h-9 text-[.8rem] font-semibold"
+									aria-label="Shuffle to a random comic">
+									<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+										stroke-linecap="round" stroke-linejoin="round">
+										<path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+									</svg>
+									Shuffle
+								</button>
+							</div>
+							<div class="deck" id="deck">
+								<div class="cover c-side c-left" id="cLeft"></div>
+								<div class="cover c-center" id="cCenter"></div>
+								<div class="cover c-side c-right" id="cRight"></div>
+							</div>
+							<div class="mt-2 text-center" id="deckInfo">
+								<h3 class="font-display font-bold text-[1.15rem]" id="dTitle">SolarFlare</h3>
+								<p class="text-[.8rem] num" style="color:var(--muted)" id="dMeta">#4 · 2026 · 48 pages</p>
+								<div class="mx-auto mt-2 max-w-[13rem] h-1.5 rounded-full overflow-hidden" style="background:var(--bg-2)">
+									<span class="block h-full rounded-full" id="dProg"
+										style="width:35%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- copy -->
+					<div class="reveal d1 lg:order-2 order-1 max-w-xl">
+						<span class="eyebrow">Browse like a longbox</span>
+						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
+							Cover-flow browsing, with a shuffle.
+						</h2>
+						<p class="mt-5 leading-relaxed text-[1.06rem]" style="color:var(--ink-2)">
+							The library opens as <strong style="color:var(--ink)">Discover</strong> — one big, uncropped cover
+							centered on screen with its neighbors peeking in, swiped like a deck of cards. It simply shows a
+							collection off better than a wall of tiny thumbnails.
+						</p>
+						<p class="mt-4 leading-relaxed" style="color:var(--muted)">
+							Filter to <strong style="color:var(--ink-2)">Popular</strong> (opened more than once) or <strong
+								style="color:var(--ink-2)">Gathering Dust</strong> (never opened). And when you can't decide, hit
+							<strong style="color:var(--ink-2)">Shuffle</strong> — it glides to a random comic (never the current
+							one). Pair it with Gathering Dust to rediscover what you never got to. It works for bookmarks, too.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ EVERYTHING ELSE (feature grid) ============ -->
+		<section id="features" class="py-20 sm:py-28" style="background:var(--surface)">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="reveal max-w-2xl">
+					<span class="eyebrow">Everything else on board</span>
+					<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
+						Small app. Deep reader.
+					</h2>
+					<p class="mt-4 leading-relaxed text-[1.05rem]" style="color:var(--muted)">
+						The goal above everything is to stay lean and fast — and still do the things collectors actually want.
+					</p>
+				</div>
+				<div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+					<!-- card -->
+					<div class="reveal ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">120 Hz native reader</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">A UIKit-fast paged core that
+							turns pages at the full ProMotion rate — page decode and prefetch off the main thread.</p>
+					</div>
+					<div class="reveal d1 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M12 6c-2-1.5-5-1.5-8-1v13c3-.5 6-.5 8 1 2-1.5 5-1.5 8-1V5c-3-.5-6-.5-8 1zM12 6v14" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Double-page landscape</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Two pages side by side, with
+							fixed pairing that never mismatches — rotate as often as you like and the spread stays consistent.
+						</p>
+					</div>
+					<div class="reveal d2 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M8 9h8M8 13h5" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Live Text on the page</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Press and hold to select and
+							copy text straight off a comic page, powered by VisionKit.</p>
+					</div>
+					<div class="reveal ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Double-tap to fit</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">No pinch, no getting lost.
+							Double-tap toggles fit-width and fit-height for a drift-free read.</p>
+					</div>
+					<div class="reveal d1 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<rect x="3" y="3" width="7" height="7" rx="1" />
+								<rect x="14" y="3" width="7" height="7" rx="1" />
+								<rect x="3" y="14" width="7" height="7" rx="1" />
+								<rect x="14" y="14" width="7" height="7" rx="1" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Page-grid picker</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Jump anywhere from a
+							thumbnail grid of every page — cached to disk, so it reopens instantly.</p>
+					</div>
+					<div class="reveal d2 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M3 3v5h5" />
+								<path d="M3 8a9 9 0 1 0 2-3" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Always resumes</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Every comic reopens on the
+							last page you read, and auto-marks itself read at the end.</p>
+					</div>
+					<div class="reveal ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M4 4h16v4H4zM4 8v12h16V8M9 12h6" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">CBZ &amp; every image type</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Opens CBZ archives with JPEG,
+							PNG, GIF, WebP, HEIC, BMP and TIFF pages inside — sorted naturally, so 2 comes before 10.</p>
+					</div>
+					<div class="reveal d1 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M12 3v12M8 11l4 4 4-4" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Import from anywhere</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">From Files, the share sheet,
+							or Open-With. Paper Comic Reader can even be your default handler for CBZ files.</p>
+					</div>
+					<div class="reveal d2 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+								<circle cx="12" cy="12" r="3" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Real covers in Files</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">A QuickLook extension shows
+							each comic's actual cover art in Files and Spotlight — not a generic ZIP icon.</p>
+					</div>
+					<div class="reveal ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<rect x="9" y="9" width="11" height="11" rx="2" />
+								<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Smart duplicate detection</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Duplicates are caught by
+							content, not filename — re-scanning a folder never clutters your library.</p>
+					</div>
+					<div class="reveal d1 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<rect x="3" y="4" width="18" height="16" rx="2" />
+								<path d="M9 4v16" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Three layouts &amp; search</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Discover deck, gallery grid,
+							or list. Search titles, series, issues and story names — accent-insensitive.</p>
+					</div>
+					<div class="reveal d2 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M21 12a9 9 0 1 1-9-9v9z" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Reading progress</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">A progress pie on every
+							cover, plus Popular and Gathering-Dust smart filters driven by how often you open each comic.</p>
+					</div>
+					<div class="reveal ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M20.6 8.5 12 3 3.4 8.5v7L12 21l8.6-5.5z" />
+								<path d="M8 10.5v5M12 8.5v8M16 10.5v5" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">ComicInfo metadata</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Reads embedded ComicInfo.xml
+							— creators, characters, summary — and even parses a story index for anthologies like weeklies.</p>
+					</div>
+					<div class="reveal d1 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path d="M12 3l2.2 4.8L19 9l-3.4 3.6L16.4 18 12 15.4 7.6 18l.8-5.4L5 9l4.8-1.2z" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Multi-select &amp; batch</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">Select many comics to mark
+							read, unread, or delete in one go — plus a demo library so it never opens empty.</p>
+					</div>
+					<div class="reveal d2 ui-card p-5">
+						<div class="ic-badge">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+								stroke-linecap="round" stroke-linejoin="round">
+								<rect x="4" y="2" width="16" height="20" rx="3" />
+								<path d="M9 6h6" />
+							</svg>
+						</div>
+						<h3 class="font-semibold mt-4 text-[1.05rem]">Built for iOS 26</h3>
+						<p class="mt-1.5 text-[.92rem] leading-relaxed" style="color:var(--muted)">A native Liquid Glass
+							design — a floating glass tab bar and glass reader controls, with Dark, Light and System themes.</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ PRIVACY ============ -->
+		<section id="privacy" class="py-20 sm:py-28">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="reveal ui-card px-6 sm:px-12 py-14 sm:py-16 text-center"
+					style="background:linear-gradient(180deg,#fffdf2,var(--surface))">
+					<span class="eyebrow justify-center">Private by design</span>
+					<h2 class="font-display font-extrabold mt-5 text-[clamp(2rem,5vw,3.4rem)] leading-[1.05] text-balance">
+						Paper Comic Reader collects <span class="mark">nothing.</span>
+					</h2>
+					<p class="mt-5 mx-auto max-w-[52ch] text-[1.08rem] leading-relaxed" style="color:var(--ink-2)">
+						No accounts, no ads, no analytics, no tracking, no network requests — except optionally fetching your
+						own comics from your own folder. Your library and reading history never leave your device.
+					</p>
+					<div class="mt-9 flex flex-wrap items-center justify-center gap-2.5 text-[.86rem]">
+						<span class="pill rounded-full px-4 py-2">100% on-device</span>
+						<span class="pill rounded-full px-4 py-2">No accounts</span>
+						<span class="pill rounded-full px-4 py-2">No analytics or ads</span>
+						<span class="pill rounded-full px-4 py-2">Open source · MIT</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ SCREENSHOT GALLERY ============ -->
+		<section class="pb-4">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="reveal">
+					<span class="eyebrow">See it</span>
+					<h2 class="font-display font-bold mt-4 text-[clamp(1.7rem,3.6vw,2.6rem)] leading-tight">Straight from the
+						app.</h2>
+				</div>
+			</div>
+			<div class="gal-scroll mt-8 flex gap-5 overflow-x-auto snap-x snap-mandatory px-5 sm:px-8 pb-8">
+				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/1-recents.png"
+					data-caption="Recents"><img src="assets/img/1-recents.png" alt="Recents — continue reading" width="780"
+						height="1689" loading="lazy" /></figure>
+				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/2-library.png"
+					data-caption="Library"><img src="assets/img/2-library.png" alt="Library grid of covers" width="780"
+						height="1689" loading="lazy" /></figure>
+				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/5-paper.png"
+					data-caption="Paper effect"><img src="assets/img/5-paper.png" alt="Reader with the paper effect"
+						width="780" height="1689" loading="lazy" /></figure>
+				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/3-bookmarks.png"
+					data-caption="Bookmarks"><img src="assets/img/3-bookmarks.png" alt="Bookmarks" width="780" height="1689"
+						loading="lazy" /></figure>
+				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/4-detail.png"
+					data-caption="Comic detail"><img src="assets/img/4-detail.png" alt="Comic detail with metadata"
+						width="780" height="1689" loading="lazy" /></figure>
+				<figure class="shot snap-center shrink-0 w-[62vw] sm:w-[19rem]" data-full="assets/img/6-folder.png"
+					data-caption="Folder / collection"><img src="assets/img/6-folder.png" alt="Folder view" width="780"
+						height="1689" loading="lazy" /></figure>
+			</div>
+		</section>
+
+		<!-- ============ DOWNLOAD ============ -->
+		<section id="download" class="px-5 sm:px-8 py-16 sm:py-24">
+			<div class="reveal relative mx-auto max-w-6xl rounded-[2rem] overflow-hidden text-center px-6 py-16 sm:py-24"
+				style="background:linear-gradient(135deg,var(--accent),var(--accent-2))">
+				<div class="absolute inset-0 opacity-40"
+					style="background:radial-gradient(60% 80% at 50% 0%,rgba(255,255,255,.6),transparent)"></div>
+				<div class="relative" style="color:#1a1a1a">
+					<h2 class="font-display font-extrabold text-[clamp(2.2rem,5.4vw,3.9rem)] leading-[1.03] text-balance">
+						Free. Forever.
+					</h2>
+					<p class="mt-4 mx-auto max-w-[44ch] text-[1.12rem] leading-relaxed" style="color:#2a2510">
+						No price, no subscription, no in-app purchases. Just a good comic reader for iPhone and iPad.
+					</p>
+					<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+						<a data-appstore href="#download"
+							class="btn-dark inline-flex items-center gap-2.5 rounded-full pl-4 pr-3 h-[3.25rem] text-[1rem] font-semibold">
+							<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<path
+									d="M16.365 1.43c0 1.14-.42 2.2-1.13 2.98-.79.87-2.06 1.54-3.14 1.46-.14-1.1.44-2.26 1.09-2.98.75-.83 2.09-1.45 3.18-1.46zM20.9 17.16c-.56 1.3-.83 1.88-1.55 3.03-1 1.62-2.43 3.63-4.2 3.64-1.57.02-1.97-1.01-4.1-1-2.13.01-2.57 1.02-4.14 1.01-1.77-.02-3.12-1.83-4.12-3.44-2.87-4.05-3.17-8.79-1.4-11.29.97-1.38 2.5-2.26 3.94-2.26 1.47 0 2.4.99 4.1.99 1.4 0 2.24-.99 4.11-.99 1.31 0 2.7.71 3.7 1.94-3.25 1.78-2.72 6.42.68 7.36z" />
+							</svg>
+							<span class="text-left leading-none">
+								<span class="block text-[.62rem] font-normal opacity-80">Download on the</span>
+								<span class="block text-[1.05rem] -mt-px">App Store</span>
+							</span>
+							<span class="soon-tag ml-1">Soon</span>
+						</a>
+						<a href="https://github.com/Wiredframe/paper-comic-reader/releases" target="_blank" rel="noopener"
+							class="inline-flex items-center gap-2 rounded-full px-6 h-[3.25rem] text-[1rem] font-semibold"
+							style="background:#1a1a1a;color:#fff">
+							<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+								stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+							</svg>
+							Get the .ipa
+						</a>
+					</div>
+					<p class="mt-6 text-[.9rem]" style="color:#2a2510">
+						iOS&nbsp;26+ · iPhone &amp; iPad · Sideload the .ipa with
+						<a href="https://altstore.io" target="_blank" rel="noopener"
+							class="underline underline-offset-2 font-semibold">AltStore</a> or
+						<a href="https://sideloadly.io" target="_blank" rel="noopener"
+							class="underline underline-offset-2 font-semibold">Sideloadly</a> ·
+						<a href="https://github.com/Wiredframe/paper-comic-reader" target="_blank" rel="noopener"
+							class="underline underline-offset-2 font-semibold">Source on GitHub</a>
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ DONATION ============ -->
+		<section id="support" class="py-16 sm:py-24" style="background:var(--surface)">
+			<div class="mx-auto max-w-6xl px-5 sm:px-8">
+				<div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+					<div class="reveal max-w-xl">
+						<span class="eyebrow">Support</span>
+						<h2 class="font-display font-bold mt-5 text-[clamp(2rem,4.4vw,3.1rem)] leading-[1.06] text-balance">
+							Free — and that's the whole deal.
+						</h2>
+						<p class="mt-5 leading-relaxed text-[1.06rem]" style="color:var(--ink-2)">
+							Paper Comic Reader is free and open source. If it earns a spot on your home screen and you feel like
+							it, you can leave a voluntary tip — a private gift,
+							<strong style="color:var(--ink)">no perks, no strings, no obligation</strong>. You buy nothing and
+							get nothing extra.
+						</p>
+						<p class="mt-4 text-[.95rem]" style="color:var(--muted)">
+							One-time or monthly, entirely as you like. The app stays free and open for everyone either way.
+						</p>
+					</div>
+					<div class="reveal d1 relative rounded-3xl p-8 sm:p-10 overflow-hidden"
+						style="background:var(--surface);border:1px solid color-mix(in srgb,var(--accent-2) 45%,var(--hair));box-shadow:var(--shadow)">
+						<div class="absolute inset-x-0 top-0 h-1"
+							style="background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div>
+						<span class="eyebrow normal-case tracking-[.05em]">Two ways</span>
+						<a data-donate href="#support"
+							class="btn-primary mt-5 inline-flex items-center justify-center gap-2 rounded-full px-6 h-[3.25rem] w-full text-[1rem] font-semibold">
+							<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<path
+									d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+							</svg> Tip once
+						</a>
+						<p class="mt-2.5 text-[.84rem] leading-relaxed" style="color:var(--muted)">Any amount · card or SEPA ·
+							securely via Stripe, no account needed.</p>
+						<div class="my-5 flex items-center gap-3 text-[.76rem] uppercase tracking-wider"
+							style="color:var(--muted)">
+							<span class="h-px flex-1" style="background:var(--hair)"></span>or<span class="h-px flex-1"
+								style="background:var(--hair)"></span>
+						</div>
+						<a href="https://github.com/sponsors/Wiredframe?frequency=recurring&amp;amount=5" target="_blank"
+							rel="noopener"
+							class="btn-ghost inline-flex items-center justify-center gap-2 rounded-full px-6 h-[3.25rem] w-full text-[1rem] font-medium">
+							<svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<path
+									d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 5 18 5.3 18 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z" />
+							</svg> Monthly via GitHub Sponsors
+						</a>
+						<p class="mt-2.5 text-[.84rem] leading-relaxed" style="color:var(--muted)">Recurring ~$5/month, cancel
+							anytime · runs through GitHub (in US dollars).</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ============ FAQ ============ -->
+		<section class="py-16 sm:py-24">
+			<div class="mx-auto max-w-3xl px-5 sm:px-8">
+				<h2 class="reveal font-display font-bold text-[clamp(1.8rem,4vw,2.6rem)] text-center">Questions</h2>
+				<div class="reveal d1 mt-9">
+					<details class="faq py-5" open>
+						<summary class="flex items-center justify-between gap-4 text-[1.06rem] font-semibold">Is it really free?
+							<span class="chev text-[1.4rem] font-light leading-none" style="color:var(--muted)">+</span>
+						</summary>
+						<p class="mt-3 leading-relaxed" style="color:var(--muted)">Yes — free and open source (MIT). No ads, no
+							subscription, no in-app purchases. Tips are welcome but entirely optional.</p>
+					</details>
+					<details class="faq py-5">
+						<summary class="flex items-center justify-between gap-4 text-[1.06rem] font-semibold">How do I install it
+							without the App Store? <span class="chev text-[1.4rem] font-light leading-none"
+								style="color:var(--muted)">+</span></summary>
+						<p class="mt-3 leading-relaxed" style="color:var(--muted)">Download the <code>.ipa</code> from GitHub
+							Releases and install it with AltStore or Sideloadly. An App Store release is on the way.</p>
+					</details>
+					<details class="faq py-5">
+						<summary class="flex items-center justify-between gap-4 text-[1.06rem] font-semibold">What comic formats
+							does it read? <span class="chev text-[1.4rem] font-light leading-none"
+								style="color:var(--muted)">+</span></summary>
+						<p class="mt-3 leading-relaxed" style="color:var(--muted)">CBZ archives (ZIP-based), with JPEG, PNG,
+							GIF, WebP, HEIC, BMP and TIFF pages inside. CBR and PDF are not supported.</p>
+					</details>
+					<details class="faq py-5">
+						<summary class="flex items-center justify-between gap-4 text-[1.06rem] font-semibold">Does it work on
+							iPad? <span class="chev text-[1.4rem] font-light leading-none"
+								style="color:var(--muted)">+</span></summary>
+						<p class="mt-3 leading-relaxed" style="color:var(--muted)">Yes — it's universal for iPhone and iPad,
+							portrait and landscape, with a proper two-page spread on bigger screens. Requires iOS or iPadOS 26.
+						</p>
+					</details>
+					<details class="faq py-5">
+						<summary class="flex items-center justify-between gap-4 text-[1.06rem] font-semibold">Do you collect any
+							data? <span class="chev text-[1.4rem] font-light leading-none"
+								style="color:var(--muted)">+</span></summary>
+						<p class="mt-3 leading-relaxed" style="color:var(--muted)">No. No accounts, no analytics, no tracking.
+							Everything stays on your device.</p>
+					</details>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<!-- ============ FOOTER ============ -->
+	<footer class="pt-14 pb-12" style="border-top:1px solid var(--hair)">
+		<div class="mx-auto max-w-6xl px-5 sm:px-8">
+			<div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+				<div>
+					<a href="#top" class="flex items-center gap-2.5">
+						<img src="assets/appicon.png" alt="" class="w-7 h-7 rounded-[8px]" />
+						<span class="font-display text-[1.15rem] font-bold">Paper Comic Reader</span>
+					</a>
+					<p class="mt-3 text-[.9rem] max-w-sm" style="color:var(--muted)">
+						A lean, native comic reader that makes pages read like ink on paper. A universal iOS app by
+						<a href="https://www.wiredframe.de" class="hover:opacity-70" target="_blank" rel="noopener">Wiredframe</a>
+						· Ulf Schuster.
+					</p>
+				</div>
+				<nav class="flex flex-wrap gap-x-7 gap-y-2.5 text-[.9rem]" style="color:var(--muted)">
+					<a href="#features" class="hover:opacity-70">Features</a>
+					<a href="#support" class="hover:opacity-70">Support</a>
+					<a href="https://github.com/Wiredframe/paper-comic-reader" target="_blank" rel="noopener"
+						class="hover:opacity-70">GitHub</a>
+					<a href="https://github.com/Wiredframe/paper-comic-reader/releases" target="_blank" rel="noopener"
+						class="hover:opacity-70">Releases</a>
+				</nav>
+			</div>
+			<div class="mt-10 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[.82rem]"
+				style="border-top:1px solid var(--hair);color:var(--muted)">
+				<p>Free &amp; open source under the MIT license.</p>
+				<p>iOS&nbsp;26+ · © <span class="js-year">2026</span> <a href="https://www.wiredframe.de"
+						class="hover:opacity-70" target="_blank" rel="noopener">Wiredframe</a> · Ulf Schuster</p>
+			</div>
+		</div>
+	</footer>
+
+	<!-- zoom lightbox for the screenshot gallery -->
+	<div id="lightbox" class="fixed inset-0 z-[100] items-center justify-center p-4 sm:p-10" aria-hidden="true"
+		role="dialog" aria-modal="true" aria-label="Screenshot preview">
+		<div class="lb-backdrop absolute inset-0"></div>
+		<img id="lb-img" class="relative rounded-[2rem] max-w-full max-h-[88vh] object-contain shadow-2xl" alt="" />
+		<button id="lb-close" type="button" class="absolute top-4 right-4 grid place-items-center w-11 h-11 rounded-full"
+			aria-label="Close preview">
+			<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+				stroke-linecap="round" stroke-linejoin="round">
+				<path d="M18 6 6 18M6 6l12 12" />
+			</svg>
+		</button>
+	</div>
+
+	<!-- ============ SCRIPTS ============ -->
+	<script>
+		// current year in footer
+		(function () {
+			var y = new Date().getFullYear();
+			document.querySelectorAll('.js-year').forEach(function (el) { el.textContent = y; });
+		})();
+
+		// ---- mobile: alternate which side each pannable panel is cropped on ----
+		(function () {
+			if (!window.matchMedia('(max-width: 767px)').matches) return;
+			var i = 0;
+			document.querySelectorAll('.pan-x').forEach(function (p) {
+				if (p.scrollWidth <= p.clientWidth) return;
+				if (i % 2 === 1) p.scrollLeft = p.scrollWidth;
+				i++;
+			});
+		})();
+
+		// ---- Paper Effect demo ----
+		(function () {
+			var screenEl = document.getElementById('paperScreen');
+			var page = document.getElementById('comicPage');
+			if (!screenEl || !page) return;
+			var PRESETS = {
+				cream: { warmth: 72, grain: 50, show: 50, lift: 35 },
+				newsprint: { warmth: 55, grain: 88, show: 30, lift: 52 },
+				manga: { warmth: 30, grain: 34, show: 24, lift: 20 },
+				eink: { warmth: 14, grain: 62, show: 10, lift: 66 }
+			};
+			var sliders = {};
+			document.querySelectorAll('.slider[data-var]').forEach(function (s) { sliders[s.getAttribute('data-var')] = s; });
+
+			function setVar(name, val) { page.style.setProperty('--' + name, (val / 100).toFixed(3)); }
+			function paperOn(on) {
+				screenEl.classList.toggle('paper-on', on);
+				document.querySelectorAll('.seg-btn[data-mode]').forEach(function (b) {
+					b.classList.toggle('on', (b.getAttribute('data-mode') === 'paper') === on);
+				});
+			}
+			function applyPreset(p) {
+				['warmth', 'grain', 'show', 'lift'].forEach(function (k) {
+					setVar(k, p[k]);
+					if (sliders[k]) sliders[k].value = p[k];
+				});
+			}
+
+			document.querySelectorAll('.chip[data-preset]').forEach(function (ch) {
+				ch.addEventListener('click', function () {
+					document.querySelectorAll('.chip[data-preset]').forEach(function (c) { c.classList.remove('on'); });
+					ch.classList.add('on');
+					applyPreset(PRESETS[ch.getAttribute('data-preset')]);
+					paperOn(true);
+				});
+			});
+			document.querySelectorAll('.slider[data-var]').forEach(function (s) {
+				s.addEventListener('input', function () {
+					setVar(s.getAttribute('data-var'), s.value);
+					paperOn(true);
+					document.querySelectorAll('.chip[data-preset]').forEach(function (c) { c.classList.remove('on'); });
+				});
+			});
+			document.querySelectorAll('.seg-btn[data-mode]').forEach(function (b) {
+				b.addEventListener('click', function () { paperOn(b.getAttribute('data-mode') === 'paper'); });
+			});
+
+			applyPreset(PRESETS.cream);
+			paperOn(true);
+		})();
+
+		// ---- Folder streaming: download on demand + Only-downloaded filter ----
+		(function () {
+			var grid = document.getElementById('folderGrid');
+			var count = document.getElementById('dlCount');
+			if (!grid) return;
+			function refresh() {
+				if (count) count.textContent = grid.querySelectorAll('.cover.downloaded').length;
+			}
+			grid.addEventListener('click', function (e) {
+				var badge = e.target.closest('.badge');
+				if (!badge) return;
+				var cover = badge.closest('.cover');
+				if (cover.classList.contains('downloaded') || cover.classList.contains('downloading')) return;
+				cover.classList.add('downloading');
+				badge.insertAdjacentHTML('beforeend', '<span class="spinner"></span>');
+				setTimeout(function () {
+					var sp = badge.querySelector('.spinner'); if (sp) sp.remove();
+					cover.classList.remove('downloading');
+					cover.classList.add('downloaded');
+					var lbl = cover.querySelector('.badge'); if (lbl) lbl.setAttribute('aria-label', 'Downloaded');
+					refresh();
+				}, 950);
+			});
+			var only = document.getElementById('onlyDl');
+			if (only) only.addEventListener('click', function () {
+				var on = grid.classList.toggle('only-dl');
+				only.classList.toggle('on', on);
+				only.setAttribute('aria-pressed', on ? 'true' : 'false');
+			});
+			refresh();
+		})();
+
+		// ---- Bookmark ribbon toggle ----
+		(function () {
+			var btn = document.getElementById('bmBtn');
+			var label = document.getElementById('bmLabel');
+			if (!btn) return;
+			btn.addEventListener('click', function () {
+				var on = btn.classList.toggle('on');
+				btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+				if (label) label.textContent = on ? 'Page bookmarked' : 'Tap to bookmark';
+			});
+		})();
+
+		// ---- Discover carousel + shuffle ----
+		(function () {
+			var POOL = [
+				{ t: 'SolarFlare', m: '#4 · 2026 · 48 pages', p: 35, g: 'linear-gradient(150deg,#ff9d3c,#f0512b)', tags: ['popular'] },
+				{ t: 'DeepBlue', m: '#11 · 2025 · 40 pages', p: 100, g: 'linear-gradient(150deg,#4b8fe6,#1f4fb0)', tags: ['popular'] },
+				{ t: 'CrimsonAlley', m: '#2 · 2026 · 52 pages', p: 0, g: 'linear-gradient(150deg,#e0596a,#9b1e3a)', tags: ['dust'] },
+				{ t: 'JadeCircuit', m: '#7 · 2025 · 36 pages', p: 62, g: 'linear-gradient(150deg,#3fca8e,#127a63)', tags: ['popular'] },
+				{ t: 'Midnight Mecha', m: '#3 · 2026 · 44 pages', p: 12, g: 'linear-gradient(150deg,#8b7bf0,#5330c4)', tags: [] },
+				{ t: 'Dust & Iron', m: '#1 · 2024 · 30 pages', p: 0, g: 'linear-gradient(150deg,#caa15a,#7c5a25)', tags: ['dust'] }
+			];
+			var deck = document.getElementById('deck');
+			var cC = document.getElementById('cCenter'), cL = document.getElementById('cLeft'), cR = document.getElementById('cRight');
+			var dTitle = document.getElementById('dTitle'), dMeta = document.getElementById('dMeta'), dProg = document.getElementById('dProg');
+			if (!deck) return;
+			var filter = 'all', idx = 0;
+
+			function pool() { return POOL.filter(function (c) { return filter === 'all' || c.tags.indexOf(filter) !== -1; }); }
+			function paintCover(el, c) { el.style.background = c.g; el.innerHTML = '<span class="ct">' + c.t + '</span>'; }
+			function render(animate) {
+				var list = pool();
+				if (!list.length) return;
+				idx = (idx + list.length) % list.length;
+				var c = list[idx];
+				paintCover(cC, c);
+				paintCover(cL, list[(idx - 1 + list.length) % list.length]);
+				paintCover(cR, list[(idx + 1) % list.length]);
+				dTitle.textContent = c.t;
+				dMeta.textContent = c.m;
+				dProg.style.width = c.p + '%';
+				if (animate) { deck.classList.remove('slide'); void deck.offsetWidth; deck.classList.add('slide'); }
+			}
+			document.getElementById('shuffleBtn').addEventListener('click', function () {
+				var n = pool().length;
+				if (n <= 1) { render(true); return; }
+				var next = idx;
+				while (next === idx) next = Math.floor(Math.random() * n);
+				idx = next;
+				render(true);
+			});
+			document.querySelectorAll('#discFilters .seg-btn').forEach(function (b) {
+				b.addEventListener('click', function () {
+					document.querySelectorAll('#discFilters .seg-btn').forEach(function (x) { x.classList.remove('on'); });
+					b.classList.add('on');
+					filter = b.getAttribute('data-filter'); idx = 0; render(true);
+				});
+			});
+			render(false);
+		})();
+
+		// ---- screenshot gallery lightbox (desktop) ----
+		(function () {
+			var lb = document.getElementById('lightbox');
+			if (!lb) return;
+			var img = document.getElementById('lb-img'), close = document.getElementById('lb-close');
+			var backdrop = lb.querySelector('.lb-backdrop'), last = null;
+			function open(fig) {
+				if (window.matchMedia('(max-width: 767px)').matches) return;
+				last = document.activeElement;
+				img.src = fig.getAttribute('data-full');
+				img.alt = fig.getAttribute('data-caption') || '';
+				lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false');
+				document.body.style.overflow = 'hidden'; close.focus();
+			}
+			function shut() {
+				lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');
+				document.body.style.overflow = '';
+				if (last && last.focus) last.focus();
+			}
+			document.querySelectorAll('.shot').forEach(function (fig) {
+				fig.addEventListener('click', function () { open(fig); });
+			});
+			close.addEventListener('click', shut);
+			backdrop.addEventListener('click', shut);
+			document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && lb.classList.contains('open')) shut(); });
+		})();
+	</script>
+	<script>
+		// ===================================================================
+		//  APP STORE LINK · single source. When the app is listed, set this
+		//  to the real App Store URL — the "App Store" buttons switch from
+		//  "Coming soon" to a live link automatically.
+		var APPSTORE_URL = ""; // e.g. "https://apps.apple.com/app/idXXXXXXXXXX"
+		// ===================================================================
+		(function () {
+			var live = APPSTORE_URL && APPSTORE_URL.indexOf("http") === 0;
+			document.querySelectorAll("[data-appstore]").forEach(function (a) {
+				if (live) {
+					a.href = APPSTORE_URL; a.target = "_blank"; a.rel = "noopener";
+					a.removeAttribute("aria-disabled");
+					var tag = a.querySelector('.soon-tag'); if (tag) tag.remove();
+				} else {
+					a.href = "#download";
+					a.setAttribute("aria-disabled", "true");
+					a.setAttribute("title", "Coming soon to the App Store");
+					a.addEventListener('click', function (e) { e.preventDefault(); });
+				}
+			});
+		})();
+	</script>
+	<script>
+		// ===================================================================
+		//  DONATION LINK · single source (Stripe Payment Link).
+		var DONATE_URL = "https://donate.stripe.com/28E14obXGgBH3ol2Fs6sw00";
+		// ===================================================================
+		(function () {
+			var ready = DONATE_URL && DONATE_URL.indexOf("PLACEHOLDER") === -1;
+			document.querySelectorAll("[data-donate]").forEach(function (a) {
+				if (ready) {
+					a.href = DONATE_URL; a.target = "_blank"; a.rel = "noopener";
+					a.removeAttribute("aria-disabled");
+				} else {
+					a.href = "#support"; a.setAttribute("aria-disabled", "true");
+				}
+			});
+		})();
+	</script>
+</body>
+
+</html>
