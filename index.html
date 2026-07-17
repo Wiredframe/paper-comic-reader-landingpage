@@ -841,23 +841,27 @@
 			will-change: transform;
 		}
 
-		/* a happy "laughing emoji" wobble: quick decaying tilt + bounce */
+		/* a happy "laughing emoji" wobble — the side-to-side tilt leads (the
+		   "laugh shake", decaying), with a lighter squash & stretch layered on
+		   the bob: a touch wider on the down-beats, taller on the up-beats. */
 		@keyframes hero-giggle {
-			0%   { transform: rotate(0)      translateY(0)    scale(1);    }
-			10%  { transform: rotate(-11deg) translateY(-2px) scale(1.03); }
-			22%  { transform: rotate(9deg)   translateY(-9px) scale(1.06); }
-			34%  { transform: rotate(-9deg)  translateY(-2px) scale(1.03); }
-			46%  { transform: rotate(8deg)   translateY(-7px) scale(1.05); }
-			58%  { transform: rotate(-7deg)  translateY(-2px) scale(1.02); }
-			70%  { transform: rotate(5deg)   translateY(-4px) scale(1.02); }
-			82%  { transform: rotate(-3deg)  translateY(-1px) scale(1.01); }
-			92%  { transform: rotate(2deg)   translateY(0)    scale(1);    }
-			100% { transform: rotate(0)      translateY(0)    scale(1);    }
+			0%   { transform: translateY(0)     rotate(0)      scale(1);          }
+			7%   { transform: translateY(2px)   rotate(4deg)   scale(1.05, 0.96); }  /* wind-up dip */
+			17%  { transform: translateY(-11px) rotate(-11deg) scale(0.96, 1.06); }  /* launch — tilt + light stretch */
+			29%  { transform: translateY(2px)   rotate(9deg)   scale(1.06, 0.95); }  /* swing back — light squash */
+			41%  { transform: translateY(-8px)  rotate(-9deg)  scale(0.97, 1.04); }
+			53%  { transform: translateY(1px)   rotate(7deg)   scale(1.04, 0.97); }
+			65%  { transform: translateY(-5px)  rotate(-5deg)  scale(0.98, 1.03); }
+			77%  { transform: translateY(0)     rotate(4deg)   scale(1.02, 0.98); }
+			88%  { transform: translateY(-2px)  rotate(-2deg)  scale(0.99, 1.01); }
+			95%  { transform: translateY(0)     rotate(1deg)   scale(1.004,0.997);}
+			100% { transform: translateY(0)     rotate(0)      scale(1);          }
 		}
 
 		@media (prefers-reduced-motion: no-preference) {
 			.hero .icon-plate img.giggle {
-				animation: hero-giggle 1.15s ease-in-out both;
+				transform-origin: 50% 60%;
+				animation: hero-giggle 1.2s ease-in-out both;
 			}
 		}
 
