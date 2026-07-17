@@ -831,6 +831,36 @@
 			border-radius: 31%;
 		}
 
+		/* the icon is tappable — it laughs when you poke it */
+		.hero .icon-plate {
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		.hero .icon-plate img {
+			will-change: transform;
+		}
+
+		/* a happy "laughing emoji" wobble: quick decaying tilt + bounce */
+		@keyframes hero-giggle {
+			0%   { transform: rotate(0)      translateY(0)    scale(1);    }
+			10%  { transform: rotate(-11deg) translateY(-2px) scale(1.03); }
+			22%  { transform: rotate(9deg)   translateY(-9px) scale(1.06); }
+			34%  { transform: rotate(-9deg)  translateY(-2px) scale(1.03); }
+			46%  { transform: rotate(8deg)   translateY(-7px) scale(1.05); }
+			58%  { transform: rotate(-7deg)  translateY(-2px) scale(1.02); }
+			70%  { transform: rotate(5deg)   translateY(-4px) scale(1.02); }
+			82%  { transform: rotate(-3deg)  translateY(-1px) scale(1.01); }
+			92%  { transform: rotate(2deg)   translateY(0)    scale(1);    }
+			100% { transform: rotate(0)      translateY(0)    scale(1);    }
+		}
+
+		@media (prefers-reduced-motion: no-preference) {
+			.hero .icon-plate img.giggle {
+				animation: hero-giggle 1.15s ease-in-out both;
+			}
+		}
+
 		@media (min-width: 640px) {
 			.hero .icon-plate {
 				padding: 2rem;
@@ -2011,6 +2041,35 @@
 					a.href = "#support"; a.setAttribute("aria-disabled", "true");
 				}
 			});
+		})();
+	</script>
+	<script>
+		// ===================================================================
+		//  HERO ICON · laughs once on load, then on every tap/click.
+		(function () {
+			var plate = document.querySelector(".hero .icon-plate");
+			if (!plate) return;
+			var img = plate.querySelector("img");
+			if (!img) return;
+
+			var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+			function laugh() {
+				img.classList.remove("giggle");
+				void img.offsetWidth; // restart the animation even mid-run
+				img.classList.add("giggle");
+			}
+
+			img.addEventListener("animationend", function () {
+				img.classList.remove("giggle");
+			});
+
+			plate.addEventListener("click", laugh);
+
+			// one-time giggle ~2s after load (skipped when motion is reduced)
+			if (!reduce.matches) {
+				window.setTimeout(laugh, 2000);
+			}
 		})();
 	</script>
 </body>
