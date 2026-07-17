@@ -812,12 +812,49 @@
 			transform: rotate(45deg);
 		}
 
-		/* ---- Hero bg ---- */
+		/* ---- Hero: saturated yellow, like the download CTA ---- */
 		.hero-bg {
 			background:
-				radial-gradient(120% 72% at 14% -2%, rgba(254, 241, 45, .38), transparent 55%),
-				radial-gradient(96% 68% at 92% 4%, rgba(255, 187, 0, .22), transparent 55%),
-				linear-gradient(180deg, #fffdf0 0%, var(--bg) 62%);
+				radial-gradient(78% 68% at 50% -14%, rgba(255, 255, 255, .60), transparent 62%),
+				linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+		}
+
+		/* generous white plate — gives the yellow icon room to breathe on yellow */
+		.hero .icon-plate {
+			background: #fff;
+			padding: 1.5rem;
+			border-radius: 2rem;
+			box-shadow: 0 28px 64px -24px rgba(60, 44, 0, .55), 0 5px 16px -8px rgba(60, 44, 0, .32);
+		}
+
+		.hero .icon-plate img {
+			border-radius: 31%;
+		}
+
+		@media (min-width: 640px) {
+			.hero .icon-plate {
+				padding: 2rem;
+				border-radius: 2.4rem;
+			}
+		}
+
+		/* white highlighter on "paper" (a yellow one would vanish on yellow) */
+		.hero .mark {
+			background: linear-gradient(180deg, transparent 56%, rgba(255, 255, 255, .74) 56%);
+		}
+
+		/* secondary button as a solid white chip on the yellow */
+		.hero .btn-ghost {
+			background: var(--surface);
+			border-color: transparent;
+			color: var(--ink);
+			box-shadow: 0 10px 24px -14px rgba(60, 44, 0, .55);
+		}
+
+		.hero .btn-ghost:hover {
+			background: #fff;
+			border-color: transparent;
+			filter: brightness(1.02);
 		}
 
 		/* ---- App Store "coming soon" tag ---- */
@@ -876,17 +913,19 @@
 <body class="font-sans antialiased">
 	<main id="top">
 		<!-- ============ HERO ============ -->
-		<section class="relative overflow-hidden">
+		<section class="relative overflow-hidden hero">
 			<div class="hero-bg absolute inset-0"></div>
 			<div class="relative mx-auto max-w-6xl px-5 sm:px-8 pt-16 sm:pt-24 pb-14 sm:pb-20 text-center">
 				<div class="reveal max-w-3xl mx-auto">
-						<img src="assets/appicon.png" alt="Paper Comic Reader app icon"
-							class="w-24 h-24 lg:w-32 lg:h-32 rounded-[23%] shadow-lg mx-auto" />
+						<span class="icon-plate inline-flex">
+							<img src="assets/appicon.png" alt="Paper Comic Reader app icon"
+								class="w-24 h-24 lg:w-32 lg:h-32" />
+						</span>
 						<h1
 							class="font-display font-extrabold mt-6 text-[clamp(2.4rem,6vw,4.3rem)] leading-[1.02] tracking-tight text-balance">
 							Comics that read like <span class="mark">paper</span>, not a backlit screen.
 						</h1>
-						<p class="mt-6 mx-auto max-w-[52ch] text-[1.12rem] leading-relaxed" style="color:var(--ink-2)">
+						<p class="mt-6 mx-auto max-w-[52ch] text-[1.12rem] leading-relaxed" style="color:#2a2410">
 							Paper Comic Reader is a lean, native reader that renders every page with a real paper look —
 							warm tone, fine grain, ink that shows through. Your whole collection, private and on-device.
 						</p>
@@ -913,8 +952,8 @@
 							</a>
 						</div>
 						<p class="mt-5 text-[.9rem] flex items-center justify-center gap-2"
-							style="color:var(--muted)">
-							<svg class="w-4 h-4" style="color:var(--pos)" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							style="color:#3a3212;align-items:flex-start">
+							<svg class="w-4 h-4" style="color:#1a1a1a;margin-top:2px;flex:none" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<path d="M9 12l2 2 4-4" />
 								<circle cx="12" cy="12" r="9" />
