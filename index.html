@@ -131,30 +131,6 @@
 			color: var(--body);
 		}
 
-		.num {
-			font-variant-numeric: tabular-nums;
-			letter-spacing: -.005em;
-		}
-
-		.eyebrow {
-			display: inline-flex;
-			align-items: center;
-			gap: .55rem;
-			font-size: .78rem;
-			font-weight: 700;
-			letter-spacing: .12em;
-			text-transform: uppercase;
-			color: var(--gold-ink);
-		}
-
-		.eyebrow::before {
-			content: "";
-			width: 1.5rem;
-			height: 2px;
-			border-radius: 2px;
-			background: var(--gold);
-		}
-
 		.wrap {
 			width: 100%;
 			max-width: var(--maxw);
@@ -525,10 +501,6 @@
 			gap: clamp(.7rem, 1.1vw, 1rem);
 		}
 
-		.c-half {
-			grid-column: span 3;
-		}
-
 		.c-third {
 			grid-column: span 2;
 		}
@@ -584,14 +556,7 @@
 			min-height: 1.1rem;
 		}
 
-		.tile__demo {
-			margin-top: 1.4rem;
-		}
-
 		@media (max-width: 920px) {
-			.c-half {
-				grid-column: span 6;
-			}
 
 			.c-third {
 				grid-column: span 3;
@@ -604,518 +569,126 @@
 				gap: .7rem;
 			}
 
-			.c-half,
-			.c-third {
+			.c-third{
 				grid-column: span 6;
 			}
 		}
 
 		/* ======================================================================
-		   PAPER EFFECT DEMO
+		   SCREENSHOT BENTO (framed iPhone shots, cropped by the tile edge)
 		   ====================================================================== */
-		.paper-stage {
-			background: #26262a;
-			border-radius: 18px;
-			padding: clamp(.9rem, 1.8vw, 1.3rem);
-			transition: background .55s ease;
+		.c-two-thirds {
+			grid-column: span 4;
 		}
 
-		.paper-stage.paper-on {
-			background: #34291b;
+		.tile--shot {
+			min-height: clamp(400px, 38vw, 470px);
+			padding-bottom: 0;
 		}
 
-		.paper-chrome {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 0 .15rem .65rem;
-			color: rgba(255, 255, 255, .82);
-			font-size: .72rem;
-			font-weight: 600;
+		.tile__copy {
+			max-width: 22rem;
 		}
 
-		.comic-page {
+		.shot {
+			--pw: clamp(190px, 17vw, 230px);
 			position: relative;
-			border-radius: 7px;
-			overflow: hidden;
-			aspect-ratio: 3 / 2;
-			background: #fff;
-			--warmth: .72;
-			--grain: .5;
-			--show: .5;
-			--lift: .35;
-			transition: background .55s ease;
-			cursor: pointer;
-		}
-
-		.paper-stage.paper-on .comic-page {
-			background: var(--paper);
-		}
-
-		.comic-page .art {
-			position: absolute;
-			inset: 0;
-			display: flex;
-			flex-direction: column;
-			gap: 3.2%;
-			padding: 4.5%;
-			transition: filter .55s ease;
-		}
-
-		.paper-stage.paper-on .comic-page .art {
-			filter: sepia(calc(var(--warmth) * .6)) contrast(.93) brightness(calc(1 + var(--lift) * .06)) saturate(.88);
-		}
-
-		.pg-hdr {
-			flex: 0 0 22%;
-			display: flex;
-			align-items: center;
-			padding: 0 6%;
-			border-radius: 5px;
-			background: #26262c;
-			color: #f3efe4;
-			font-weight: 800;
-			font-size: clamp(.75rem, 2vw, 1.05rem);
-			letter-spacing: .08em;
-			white-space: nowrap;
-			overflow: hidden;
-		}
-
-		.pg-panels {
 			flex: 1 1 auto;
-			display: flex;
-			gap: 3.2%;
+			min-height: 220px;
+			margin-top: 1.6rem;
+		}
+
+		.phone {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			width: var(--pw);
+			transform: translateX(-50%);
+			border: calc(var(--pw) * .028) solid #1c1a17;
+			border-radius: calc(var(--pw) * .15);
+			background: #1c1a17;
+			overflow: hidden;
+			box-shadow: 0 30px 60px -30px rgba(40, 33, 18, .45), 0 4px 10px rgba(40, 33, 18, .08);
+		}
+
+		.phone img {
+			display: block;
+			width: 100%;
+			height: auto;
+			border-radius: calc(var(--pw) * .122);
+		}
+
+		/* wide tiles: copy left, phone(s) right */
+		.tile--wide {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			column-gap: 1.5rem;
+		}
+
+		.tile--wide .shot {
+			margin-top: 0;
 			min-height: 0;
 		}
 
-		.pg-pnl {
-			border-radius: 5px;
-			overflow: hidden;
+		.tile--wide .phone {
+			top: 2.2rem;
 		}
 
-		.pg-pnl.a {
-			flex: 1;
-			background: linear-gradient(160deg, #9a9a9a, #bfbfbf);
-		}
-
-		.pg-pnl.b {
-			flex: 1.2;
-			background: linear-gradient(100deg, #6d6d6d 0%, #ededed 100%);
-		}
-
-		.pg-swatches {
-			flex: 0 0 auto;
-			display: flex;
-			gap: 3.2%;
-		}
-
-		.pg-sw {
-			flex: 1;
-			aspect-ratio: 1;
-			border-radius: 5px;
-		}
-
-		.pg-sw.a {
-			background: #cf7a3c;
-		}
-
-		.pg-sw.b {
-			background: #d8b23f;
-		}
-
-		.pg-sw.c {
-			background: #9a8f5a;
-		}
-
-		.pg-sw.d {
-			background: #b5642f;
-		}
-
-		.ov {
-			position: absolute;
-			inset: 0;
-			pointer-events: none;
-			opacity: 0;
-			transition: opacity .55s ease;
-		}
-
-		.paper-cool {
-			background: linear-gradient(180deg, rgba(176, 208, 255, .34), rgba(202, 222, 255, .2));
-			mix-blend-mode: screen;
-			opacity: .5;
-		}
-
-		.paper-stage.paper-on .paper-cool {
-			opacity: 0;
-		}
-
-		.paper-warm {
-			background: var(--paper);
-			mix-blend-mode: multiply;
-		}
-
-		.paper-stage.paper-on .paper-warm {
-			opacity: calc(var(--warmth) * .8);
-		}
-
-		.paper-grain {
-			inset: -25%;
-			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-			background-size: 150px 150px;
-			mix-blend-mode: multiply;
-		}
-
-		.paper-stage.paper-on .paper-grain {
-			opacity: calc(var(--grain) * .9);
-		}
-
-		.paper-show {
-			background: radial-gradient(120% 82% at 32% 22%, rgba(255, 248, 224, .55), transparent 62%);
-			mix-blend-mode: screen;
-		}
-
-		.paper-stage.paper-on .paper-show {
-			opacity: var(--show);
-		}
-
-		.paper-controls {
-			margin-top: 1rem;
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			justify-content: space-between;
-			gap: .75rem;
-		}
-
-		.seg {
-			background: rgba(0, 0, 0, .05);
-			border: 1px solid var(--hair);
-			border-radius: 11px;
-			padding: 3px;
-			display: inline-flex;
-			gap: 2px;
-		}
-
-		.tile--accent .seg {
-			background: rgba(255, 255, 255, .4);
-			border-color: rgba(90, 60, 0, .18);
-		}
-
-		.seg-btn {
-			font-size: .8rem;
-			font-weight: 600;
-			padding: .42rem .85rem;
-			border-radius: 8px;
-			color: var(--muted);
-			cursor: pointer;
-			border: 0;
-			background: transparent;
-			white-space: nowrap;
-		}
-
-		.seg-btn.on {
-			background: var(--tile-white);
-			color: var(--ink);
-			box-shadow: 0 1px 3px rgba(0, 0, 0, .14);
-		}
-
-		.chips {
-			display: flex;
-			flex-wrap: wrap;
-			gap: .4rem;
-		}
-
-		.chip {
-			font-size: .78rem;
-			font-weight: 600;
-			padding: .4rem .78rem;
-			border-radius: 999px;
-			border: 1px solid var(--hair);
-			background: var(--tile-white);
-			color: var(--ink-soft);
-			cursor: pointer;
-		}
-
-		.chip.on {
-			background: var(--ink);
-			border-color: transparent;
-			color: #fff;
-		}
-
-		/* ======================================================================
-		   COVER TILES  (warm, on-brand; all named "Comic")
-		   ====================================================================== */
-		.covers {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: .65rem;
-		}
-
-		/* comic covers read like little paper pages: white to light-yellow, dark title */
-		/* comic covers: flat, very light paper pages. No gradient, no border. */
-		.cover {
-			position: relative;
-			aspect-ratio: 2 / 3;
-			border-radius: 10px;
-			overflow: hidden;
-			box-shadow: 0 4px 14px -9px rgba(70, 50, 0, .24);
-			color: var(--ink);
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			padding: .65rem .6rem;
-			isolation: isolate;
-		}
-
-		.cover .ct {
-			font-weight: 800;
-			font-size: .74rem;
-			text-transform: uppercase;
-			letter-spacing: .12em;
-			line-height: 1;
-			color: var(--ink);
-		}
-
-		.cover .cs {
-			font-size: .58rem;
-			font-weight: 700;
-			letter-spacing: .02em;
-			color: var(--ink-soft);
-			opacity: .55;
-		}
-
-		.badge {
-			position: absolute;
-			top: .42rem;
-			right: .42rem;
-			z-index: 3;
-			width: 1.5rem;
-			height: 1.5rem;
-			border-radius: 50%;
-			display: grid;
-			place-items: center;
-			background: rgba(255, 255, 255, .92);
-			-webkit-backdrop-filter: blur(4px);
-			backdrop-filter: blur(4px);
-			color: var(--gold-ink);
-			border: 0;
-			box-shadow: 0 1px 4px rgba(60, 42, 0, .18);
-			cursor: pointer;
-		}
-
-		.badge svg {
-			width: .85rem;
-			height: .85rem;
-		}
-
-		.cover.downloaded .badge {
-			background: var(--pos);
-			color: #fff;
-			border-color: transparent;
-			cursor: default;
-		}
-
-		.cover .badge .ic-check {
-			display: none;
-		}
-
-		.cover.downloaded .badge .ic-cloud {
-			display: none;
-		}
-
-		.cover.downloaded .badge .ic-check {
-			display: block;
-		}
-
-		.cover.downloading .badge svg {
-			display: none;
-		}
-
-		.spinner {
-			width: .82rem;
-			height: .82rem;
-			border: 2px solid rgba(120, 90, 20, .25);
-			border-top-color: var(--gold-ink);
-			border-radius: 50%;
-			animation: spin .7s linear infinite;
-		}
-
-		@keyframes spin {
-			to {
-				transform: rotate(360deg);
-			}
-		}
-
-		.covers.only-dl .cover:not(.downloaded) {
-			opacity: .16;
-			pointer-events: none;
-			filter: grayscale(.7);
-		}
-
-		.tile__row {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: .75rem;
-		}
-
-		.folder-tag {
-			display: inline-flex;
-			align-items: center;
-			gap: .45rem;
-			font-size: .82rem;
-			font-weight: 600;
-			color: var(--ink-soft);
-		}
-
-		.tile__foot {
-			margin-top: .85rem;
-			font-size: .8rem;
-			color: var(--muted);
-			display: flex;
-			align-items: center;
-			gap: .5rem;
-		}
-
-		.dot {
-			width: 7px;
-			height: 7px;
-			border-radius: 50%;
-			background: var(--pos);
-			flex: none;
-		}
-
-		/* Bookmarks */
-		.bm-btn {
-			display: inline-grid;
-			place-items: center;
-			width: 2.2rem;
-			height: 2.2rem;
-			border-radius: 999px;
-			border: 1px solid var(--hair);
-			background: var(--tile-white);
-			color: var(--muted);
-			cursor: pointer;
-		}
-
-		.bm-btn.on {
-			background: var(--yellow);
-			border-color: transparent;
-			color: #241c00;
-		}
-
-		.bm-btn.on svg {
-			fill: #241c00;
-		}
-
-		.bm-search {
-			display: flex;
-			align-items: center;
-			gap: .5rem;
-			border-radius: 11px;
-			padding: 0 .8rem;
-			height: 2.3rem;
-			background: rgba(0, 0, 0, .045);
-			color: var(--muted);
-			font-size: .84rem;
-			margin: .9rem 0;
-		}
-
-		.bm-grid {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: .55rem;
-		}
-
-		.bm-item {
-			display: flex;
-			flex-direction: column;
-			gap: .35rem;
-		}
-
-		.bm-item .cover {
-			box-shadow: 0 4px 12px -7px rgba(60, 42, 0, .5);
-		}
-
-		.bm-cap {
-			font-size: .68rem;
-			font-weight: 600;
-			color: var(--muted);
-		}
-
-		/* Discover deck */
-		.deck {
-			position: relative;
-			height: 12.5rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.deck .cover {
-			transition: transform .5s cubic-bezier(.2, .7, .2, 1), opacity .5s ease;
-		}
-
-		.deck .c-center {
-			width: 7.2rem;
-			z-index: 3;
-		}
-
-		.deck .c-side {
-			position: absolute;
-			width: 6rem;
-			opacity: .6;
+		.shot--pair .phone {
+			left: 62%;
 			z-index: 1;
 		}
 
-		.deck .c-left {
-			transform: translateX(-70%) scale(.86);
+		.shot--pair .phone--back {
+			left: 22%;
+			top: 5.5rem;
+			z-index: 0;
+			transform: translateX(-50%) rotate(-6deg);
+			box-shadow: 0 20px 40px -24px rgba(40, 33, 18, .4);
 		}
 
-		.deck .c-right {
-			transform: translateX(70%) scale(.86);
+		/* phone hangs in from the top edge, copy sits below */
+		.tile--flip {
+			padding-top: 0;
+			padding-bottom: clamp(1.4rem, 2vw, 1.9rem);
 		}
 
-		.deck.slide .c-center {
-			animation: deckin .5s cubic-bezier(.2, .7, .2, 1);
+		.tile--flip .shot {
+			margin: 0 0 1.4rem;
 		}
 
-		@keyframes deckin {
-			from {
-				opacity: .2;
-				transform: translateX(26%) scale(.9);
+		.tile--flip .phone {
+			top: auto;
+			bottom: 0;
+		}
+
+		.tile__icon {
+			color: var(--gold);
+		}
+
+		@media (max-width: 920px) {
+			.c-two-thirds {
+				grid-column: span 6;
+			}
+		}
+
+		@media (max-width: 560px) {
+			.tile--wide {
+				display: flex;
 			}
 
-			to {
-				opacity: 1;
-				transform: none;
+			.tile--wide .shot {
+				min-height: 300px;
+				margin-top: 1.6rem;
 			}
-		}
 
-		.deck-info {
-			text-align: center;
-			margin-top: .65rem;
-		}
+			.tile--wide .phone {
+				top: 0;
+			}
 
-		.deck-info h4 {
-			font-weight: 700;
-			font-size: 1rem;
-		}
-
-		.deck-prog {
-			margin: .5rem auto 0;
-			max-width: 12rem;
-			height: 6px;
-			border-radius: 999px;
-			overflow: hidden;
-			background: rgba(0, 0, 0, .07);
-		}
-
-		.deck-prog span {
-			display: block;
-			height: 100%;
-			border-radius: 999px;
-			background: linear-gradient(90deg, var(--yellow), var(--gold));
+			.tile--shot {
+				min-height: 440px;
+			}
 		}
 
 		/* ======================================================================
@@ -1349,126 +922,47 @@
 				</div>
 			</div>
 		</section>
-		<!-- ============ THE READER (Paper effect + library, one bento) ============ -->
+		<!-- ============ THE READER (screenshot bento) ============ -->
 		<section id="reader" class="section">
 			<div class="wrap">
 				<div class="reveal measure stack" style="margin-bottom:2.5rem">
 					<h2 class="display h-sec">From your shelf to the page.</h2>
 				</div>
-				<div class="bento">
-					<!-- Paper effect (interactive, the star) -->
-					<div class="reveal tile c-half">
-						<h3 class="tile__title">Ink on paper, not glare.</h3>
-						<p class="tile__text">Every page is re-rendered warm, with fine grain and a little show-through.
-							Flip from screen to paper, live.</p>
-						<div class="tile__demo">
-							<div class="tile__row" style="margin-bottom:.85rem">
-								<div class="chips">
-									<button class="chip on" data-preset="cream">Cream</button>
-									<button class="chip" data-preset="newsprint">Newsprint</button>
-									<button class="chip" data-preset="manga">Manga</button>
-									<button class="chip" data-preset="eink">E-Ink</button>
-								</div>
-								<div class="seg" role="tablist" aria-label="Reading mode">
-									<button class="seg-btn" data-mode="screen" role="tab">Screen</button>
-									<button class="seg-btn on" data-mode="paper" role="tab">Paper</button>
-								</div>
-							</div>
-							<div class="paper-stage paper-on" id="paperScreen">
-								<div class="paper-chrome">
-									<span>Comic · #4</span>
-									<span class="num">12 / 48</span>
-								</div>
-								<div class="comic-page" id="comicPage">
-									<div class="art">
-										<div class="pg-hdr">COMIC</div>
-										<div class="pg-panels">
-											<div class="pg-pnl a"></div>
-											<div class="pg-pnl b"></div>
-										</div>
-										<div class="pg-swatches">
-											<span class="pg-sw a"></span>
-											<span class="pg-sw b"></span>
-											<span class="pg-sw c"></span>
-											<span class="pg-sw d"></span>
-										</div>
-									</div>
-									<div class="ov paper-cool"></div>
-									<div class="ov paper-warm"></div>
-									<div class="ov paper-grain"></div>
-									<div class="ov paper-show"></div>
-								</div>
-							</div>
+				<div class="bento shots">
+					<!-- Paper effect (wide, two phones) -->
+					<div class="reveal tile tile--shot tile--wide c-two-thirds">
+						<div class="tile__copy">
+							<h3 class="tile__title">Ink on paper, not glare.</h3>
+							<p class="tile__text">Every page is re-rendered warm, with fine grain and a little
+								show-through. Flip from screen to paper, live.</p>
+						</div>
+						<div class="shot shot--pair">
+							<div class="phone phone--back"><img src="assets/img/screens/reader.jpg" width="900"
+									height="1955" loading="lazy" alt="A comic page in the reader with the paper effect"></div>
+							<div class="phone"><img src="assets/img/screens/paper.jpg" width="900" height="1955"
+									loading="lazy" alt="Paper Effect settings with presets and sliders"></div>
 						</div>
 					</div>
-					<!-- Folder streaming (interactive, 3 covers) -->
-					<div class="reveal tile c-half">
+					<!-- Recents -->
+					<div class="reveal tile tile--shot c-third">
+						<h3 class="tile__title">Right where you left off.</h3>
+						<p class="tile__text">Recents opens on the comic you were reading, one tap from the page.</p>
+						<div class="shot">
+							<div class="phone"><img src="assets/img/screens/recents.jpg" width="900" height="1955"
+									loading="lazy" alt="Recents screen with the last comic and a Read button"></div>
+						</div>
+					</div>
+					<!-- Folder streaming -->
+					<div class="reveal tile tile--shot c-third">
 						<h3 class="tile__title">Point it at a folder.</h3>
 						<p class="tile__text">Aim it at any folder your Files app can reach. Covers load at once; a
 							comic downloads when you open it.</p>
-						<div class="tile__demo">
-							<div class="tile__row" style="margin-bottom:.85rem">
-								<span class="folder-tag">
-									<svg width="17" height="17" style="color:var(--gold-ink)" viewBox="0 0 24 24"
-										fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-										stroke-linejoin="round">
-										<path
-											d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
-									</svg> Comics · Home NAS </span>
-								<button id="onlyDl" class="chip" aria-pressed="false">Only downloaded</button>
-							</div>
-							<div class="covers" id="folderGrid">
-								<div class="cover" style="background:#fffdf3">
-									<button class="badge" aria-label="Download">
-										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-											stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-											<path d="M12 13v8M8 17l4 4 4-4" />
-											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
-										</svg>
-										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-											stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-											<path d="M20 6 9 17l-5-5" />
-										</svg>
-									</button>
-									<span class="ct">Comic</span><span class="cs">#4 · 2026</span>
-								</div>
-								<div class="cover downloaded" style="background:#fffdf3">
-									<button class="badge" aria-label="Downloaded">
-										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-											stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-											<path d="M12 13v8M8 17l4 4 4-4" />
-											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
-										</svg>
-										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-											stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-											<path d="M20 6 9 17l-5-5" />
-										</svg>
-									</button>
-									<span class="ct">Comic</span><span class="cs">#11 · 2025</span>
-								</div>
-								<div class="cover" style="background:#fffdf3">
-									<button class="badge" aria-label="Download">
-										<svg class="ic-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-											stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-											<path d="M12 13v8M8 17l4 4 4-4" />
-											<path d="M20 16.6A5 5 0 0 0 18 7h-1.3A7 7 0 1 0 5 14" />
-										</svg>
-										<svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-											stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-											<path d="M20 6 9 17l-5-5" />
-										</svg>
-									</button>
-									<span class="ct">Comic</span><span class="cs">#2 · 2026</span>
-								</div>
-							</div>
-							<p class="tile__foot">
-								<span class="dot"></span>
-								<span><span id="dlCount">1</span> of 3 downloaded · tap the cloud to pull one
-									down</span>
-							</p>
+						<div class="shot">
+							<div class="phone"><img src="assets/img/screens/library.jpg" width="900" height="1955"
+									loading="lazy" alt="Library grid of comic covers with search"></div>
 						</div>
 					</div>
-					<!-- Privacy (accent CTA tile) -->
+					<!-- Privacy (accent, text only) -->
 					<div class="reveal tile tile--accent c-third">
 						<h3 class="tile__title">Collects nothing.</h3>
 						<p class="tile__text">No accounts, no ads, no tracking. Your library never leaves the device.
@@ -1481,77 +975,37 @@
 								style="background:rgba(255,255,255,.6);border-color:rgba(90,60,0,.16)">MIT</span>
 						</div>
 					</div>
-					<!-- Bookmarks (interactive) -->
-					<div class="reveal tile c-third">
-						<h3 class="tile__title">Bookmarks you know on sight.</h3>
-						<p class="tile__text">One tap saves a picture of the page, not a number. All in one place,
-							searchable.</p>
-						<div class="tile__demo">
-							<div class="tile__row">
-								<span class="folder-tag">
-									<button class="bm-btn on" id="bmBtn" aria-pressed="true"
-										aria-label="Bookmark this page">
-										<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"
-											aria-hidden="true">
-											<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
-										</svg>
-									</button>
-									<span id="bmLabel">Page bookmarked</span>
-								</span>
-							</div>
-							<div class="bm-search">
-								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-									stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									<circle cx="11" cy="11" r="7" />
-									<path d="m21 21-4.3-4.3" />
-								</svg> Search bookmarks
-							</div>
-							<div class="bm-grid">
-								<div class="bm-item">
-									<div class="cover" style="background:#fffdf3"><span class="ct">Comic</span></div>
-									<span class="bm-cap num">#4 · p. 12</span>
-								</div>
-								<div class="bm-item">
-									<div class="cover" style="background:#fffdf3"><span class="ct">Comic</span></div>
-									<span class="bm-cap num">#7 · p. 30</span>
-								</div>
-								<div class="bm-item">
-									<div class="cover" style="background:#fffdf3"><span class="ct">Comic</span></div>
-									<span class="bm-cap num">#3 · p. 7</span>
-								</div>
-							</div>
+					<!-- Discover (phone hangs from the top, text below) -->
+					<div class="reveal tile tile--shot tile--flip c-third">
+						<div class="shot">
+							<div class="phone"><img src="assets/img/screens/discover.jpg" width="900" height="1955"
+									loading="lazy" alt="Discover view with a large cover and Read button"></div>
 						</div>
-					</div>
-					<!-- Discover (interactive) -->
-					<div class="reveal tile c-third">
 						<h3 class="tile__title">Browse like a deck.</h3>
 						<p class="tile__text">Big covers, swiped like cards. Filter by mood, or shuffle to a random
 							pick.</p>
-						<div class="tile__demo">
-							<div class="tile__row" style="margin-bottom:.4rem">
-								<div class="seg" id="discFilters">
-									<button class="seg-btn on" data-filter="all">All</button>
-									<button class="seg-btn" data-filter="popular">Popular</button>
-									<button class="seg-btn" data-filter="dust">Dust</button>
-								</div>
-								<button id="shuffleBtn" class="btn btn--yellow btn-sm"
-									aria-label="Shuffle to a random comic">
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-										stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-										<path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
-									</svg> Shuffle </button>
-							</div>
-							<div class="deck" id="deck">
-								<div class="cover c-side c-left" id="cLeft"></div>
-								<div class="cover c-center" id="cCenter"></div>
-								<div class="cover c-side c-right" id="cRight"></div>
-							</div>
-							<div class="deck-info" id="deckInfo">
-								<h4 id="dTitle">Comic</h4>
-								<p class="num" style="font-size:.8rem;color:var(--muted)" id="dMeta">#4 · 2026 · 48
-									pages</p>
-								<div class="deck-prog"><span id="dProg" style="width:35%"></span></div>
-							</div>
+					</div>
+					<!-- Bookmarks (text only, white) -->
+					<div class="reveal tile tile--white c-third">
+						<svg class="tile__icon" width="34" height="34" viewBox="0 0 24 24" fill="currentColor"
+							aria-hidden="true">
+							<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
+						</svg>
+						<div class="tile__spacer"></div>
+						<h3 class="tile__title">Bookmarks you know on sight.</h3>
+						<p class="tile__text">One tap saves a picture of the page, not a number. All in one place,
+							searchable.</p>
+					</div>
+					<!-- Detail (wide, phone right) -->
+					<div class="reveal tile tile--shot tile--wide c-two-thirds">
+						<div class="tile__copy">
+							<h3 class="tile__title">Knows what's inside.</h3>
+							<p class="tile__text">Writers, artists and every story of an anthology, read straight from
+								the ComicInfo in your files.</p>
+						</div>
+						<div class="shot">
+							<div class="phone"><img src="assets/img/screens/detail.jpg" width="900" height="1955"
+									loading="lazy" alt="Comic detail sheet with stories, credits and publication info"></div>
 						</div>
 					</div>
 				</div>
@@ -1767,132 +1221,6 @@
 			function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 8); }
 			onScroll();
 			window.addEventListener('scroll', onScroll, { passive: true });
-		})();
-
-		// ---- Paper Effect demo (presets + Screen/Paper toggle; tap page to flip) ----
-		(function () {
-			var screenEl = document.getElementById('paperScreen');
-			var page = document.getElementById('comicPage');
-			if (!screenEl || !page) return;
-			var PRESETS = {
-				cream: { warmth: 72, grain: 50, show: 50, lift: 35 },
-				newsprint: { warmth: 55, grain: 88, show: 30, lift: 52 },
-				manga: { warmth: 30, grain: 34, show: 24, lift: 20 },
-				eink: { warmth: 14, grain: 62, show: 10, lift: 66 }
-			};
-			function setVar(name, val) { page.style.setProperty('--' + name, (val / 100).toFixed(3)); }
-			function paperOn(on) {
-				screenEl.classList.toggle('paper-on', on);
-				document.querySelectorAll('.seg-btn[data-mode]').forEach(function (b) {
-					b.classList.toggle('on', (b.getAttribute('data-mode') === 'paper') === on);
-				});
-			}
-			function applyPreset(p) { ['warmth', 'grain', 'show', 'lift'].forEach(function (k) { setVar(k, p[k]); }); }
-
-			document.querySelectorAll('.chip[data-preset]').forEach(function (ch) {
-				ch.addEventListener('click', function () {
-					document.querySelectorAll('.chip[data-preset]').forEach(function (c) { c.classList.remove('on'); });
-					ch.classList.add('on');
-					applyPreset(PRESETS[ch.getAttribute('data-preset')]);
-					paperOn(true);
-				});
-			});
-			document.querySelectorAll('.seg-btn[data-mode]').forEach(function (b) {
-				b.addEventListener('click', function () { paperOn(b.getAttribute('data-mode') === 'paper'); });
-			});
-			page.addEventListener('click', function () { paperOn(!screenEl.classList.contains('paper-on')); });
-
-			applyPreset(PRESETS.cream);
-			paperOn(true);
-		})();
-
-		// ---- Folder streaming: download on demand + Only-downloaded filter ----
-		(function () {
-			var grid = document.getElementById('folderGrid');
-			var count = document.getElementById('dlCount');
-			if (!grid) return;
-			function refresh() { if (count) count.textContent = grid.querySelectorAll('.cover.downloaded').length; }
-			grid.addEventListener('click', function (e) {
-				var badge = e.target.closest('.badge');
-				if (!badge) return;
-				var cover = badge.closest('.cover');
-				if (cover.classList.contains('downloaded') || cover.classList.contains('downloading')) return;
-				cover.classList.add('downloading');
-				badge.insertAdjacentHTML('beforeend', '<span class="spinner"></span>');
-				setTimeout(function () {
-					var sp = badge.querySelector('.spinner'); if (sp) sp.remove();
-					cover.classList.remove('downloading');
-					cover.classList.add('downloaded');
-					var lbl = cover.querySelector('.badge'); if (lbl) lbl.setAttribute('aria-label', 'Downloaded');
-					refresh();
-				}, 950);
-			});
-			var only = document.getElementById('onlyDl');
-			if (only) only.addEventListener('click', function () {
-				var on = grid.classList.toggle('only-dl');
-				only.classList.toggle('on', on);
-				only.setAttribute('aria-pressed', on ? 'true' : 'false');
-			});
-			refresh();
-		})();
-
-		// ---- Bookmark ribbon toggle ----
-		(function () {
-			var btn = document.getElementById('bmBtn');
-			var label = document.getElementById('bmLabel');
-			if (!btn) return;
-			btn.addEventListener('click', function () {
-				var on = btn.classList.toggle('on');
-				btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-				if (label) label.textContent = on ? 'Page bookmarked' : 'Tap to bookmark';
-			});
-		})();
-
-		// ---- Discover carousel + shuffle ----
-		(function () {
-			var POOL = [
-				{ t: 'Comic', m: '#4 · 2026 · 48 pages', p: 35, g: '#fffdf3', tags: ['popular'] },
-				{ t: 'Comic', m: '#11 · 2025 · 40 pages', p: 100, g: '#fffdf3', tags: ['popular'] },
-				{ t: 'Comic', m: '#2 · 2026 · 52 pages', p: 0, g: '#fffdf3', tags: ['dust'] },
-				{ t: 'Comic', m: '#7 · 2025 · 36 pages', p: 62, g: '#fffdf3', tags: ['popular'] },
-				{ t: 'Comic', m: '#3 · 2026 · 44 pages', p: 12, g: '#fffdf3', tags: [] },
-				{ t: 'Comic', m: '#1 · 2024 · 30 pages', p: 0, g: '#fffdf3', tags: ['dust'] }
-			];
-			var deck = document.getElementById('deck');
-			var cC = document.getElementById('cCenter'), cL = document.getElementById('cLeft'), cR = document.getElementById('cRight');
-			var dTitle = document.getElementById('dTitle'), dMeta = document.getElementById('dMeta'), dProg = document.getElementById('dProg');
-			if (!deck) return;
-			var filter = 'all', idx = 0;
-			function pool() { return POOL.filter(function (c) { return filter === 'all' || c.tags.indexOf(filter) !== -1; }); }
-			function paintCover(el, c) { el.style.background = c.g; el.innerHTML = '<span class="ct">' + c.t + '</span>'; }
-			function render(animate) {
-				var list = pool();
-				if (!list.length) return;
-				idx = (idx + list.length) % list.length;
-				var c = list[idx];
-				paintCover(cC, c);
-				paintCover(cL, list[(idx - 1 + list.length) % list.length]);
-				paintCover(cR, list[(idx + 1) % list.length]);
-				dTitle.textContent = c.t;
-				dMeta.textContent = c.m;
-				dProg.style.width = c.p + '%';
-				if (animate) { deck.classList.remove('slide'); void deck.offsetWidth; deck.classList.add('slide'); }
-			}
-			document.getElementById('shuffleBtn').addEventListener('click', function () {
-				var n = pool().length;
-				if (n <= 1) { render(true); return; }
-				var next = idx;
-				while (next === idx) next = Math.floor(Math.random() * n);
-				idx = next; render(true);
-			});
-			document.querySelectorAll('#discFilters .seg-btn').forEach(function (b) {
-				b.addEventListener('click', function () {
-					document.querySelectorAll('#discFilters .seg-btn').forEach(function (x) { x.classList.remove('on'); });
-					b.classList.add('on');
-					filter = b.getAttribute('data-filter'); idx = 0; render(true);
-				});
-			});
-			render(false);
 		})();
 	</script>
 	<script>

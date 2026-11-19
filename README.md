@@ -40,6 +40,6 @@ no CI build is required.
 ## Assets
 
 - `assets/appicon.png` — app icon (from the app repo).
-- `assets/img/1-recents.png … 6-folder.png` — iPhone screenshots, web-optimized.
+- `assets/img/screens/*.jpg`: raw iPhone screenshots (900 px) from the Figma file "Wiredframe App Store Screens"; the iPhone frame is drawn in CSS.
 
 App © Wiredframe · Ulf Schuster. App source & releases: <https://github.com/Wiredframe/paper-comic-reader>
