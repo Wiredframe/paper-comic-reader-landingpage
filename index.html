@@ -4,16 +4,16 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Paper Comic Reader — comics that read like paper, on iPhone, iPad &amp; Mac</title>
+	<title>Paper Comic Reader for iPhone, iPad &amp; Mac</title>
 	<meta name="description"
-		content="A lean, native comic reader for iPhone, iPad and Mac that renders every page with a real paper effect: warm tone, fine grain, ink that shows through. Stream your whole CBZ collection from a folder, keep visual bookmarks, browse by cover art. Free, open source, and completely on-device." />
+		content="Read your comics on iPhone, iPad and Mac with a warm paper look on every page. Open your CBZ collection straight from any folder and find your favorite panels again with picture bookmarks. Free, open source, and everything stays on your device." />
 	<link rel="icon" type="image/png" href="assets/appicon.png" />
 	<link rel="apple-touch-icon" href="assets/appicon.png" />
 	<meta name="theme-color" content="#fde84a" />
 	<meta name="apple-itunes-app" content="app-id=6788421253" />
 	<meta property="og:title" content="Paper Comic Reader" />
 	<meta property="og:description"
-		content="Comics that read like paper, not a backlit screen. A lean, native, private comic reader for iPhone, iPad &amp; Mac." />
+		content="Your comics, the way they were meant to be read. Free for iPhone, iPad &amp; Mac." />
 	<meta property="og:type" content="website" />
 	<meta property="og:image" content="assets/appicon.png" />
 	<!-- Hand-written design system. No Tailwind, no build step: one self-contained file. -->
@@ -447,17 +447,7 @@
 		.hero h1 {
 			margin-top: 1.7rem;
 			margin-inline: auto;
-		}
-
-		/* "paper" as an actual cream sheet, lifted off the yellow (metaphor, not a marker) */
-		.paper-word {
-			display: inline-block;
-			background: linear-gradient(176deg, #fffef9 0%, #fff4d6 100%);
-			color: var(--ink);
-			padding: .02em .26em .05em;
-			border-radius: .12em;
-			box-shadow: 0 14px 30px -10px rgba(150, 100, 0, .55), 0 2px 5px -1px rgba(120, 80, 0, .3);
-			transform: rotate(-2.4deg);
+			text-wrap: balance;
 		}
 
 		.hero .lead {
@@ -482,14 +472,16 @@
 			color: #3a3212;
 		}
 
-		.hero .pills {
-			margin-top: 2.4rem;
+		.hero__links {
+			display: flex;
+			flex-wrap: wrap;
 			justify-content: center;
+			gap: .5rem 1.4rem;
 		}
 
-		.hero .pill {
-			background: rgba(255, 255, 255, .82);
-			border-color: rgba(120, 82, 0, .14);
+		.hero__links .textlink {
+			color: #3a3212;
+			text-decoration-color: rgba(90, 70, 10, .4);
 		}
 
 		/* ======================================================================
@@ -708,28 +700,30 @@
 			color: #3a2e05;
 		}
 
-		.donate-card {
-			max-width: 46rem;
-			margin-inline: auto;
-			text-align: center;
-			background: var(--tile-white);
-			border-radius: clamp(22px, 3vw, 30px);
-			padding: clamp(2rem, 4.5vw, 3.25rem);
-			box-shadow: var(--shadow);
-		}
-
-		.donate__btns {
+		.cta-band__more {
 			display: flex;
 			flex-wrap: wrap;
-			gap: .7rem;
 			justify-content: center;
-			margin-top: 1.5rem;
+			gap: .6rem;
 		}
 
-		.fineprint {
-			margin-top: 1rem;
-			font-size: .84rem;
-			color: var(--muted);
+		.btn--paper {
+			background: rgba(255, 255, 255, .78);
+			color: #241c00;
+		}
+
+		.btn--paper:hover {
+			background: #fff;
+		}
+
+		.btn--line {
+			background: transparent;
+			color: #241c00;
+			border: 1px solid rgba(60, 44, 0, .28);
+		}
+
+		.btn--line:hover {
+			border-color: rgba(60, 44, 0, .55);
 		}
 
 		.faq {
@@ -857,7 +851,7 @@
 					<a href="https://github.com/Wiredframe/paper-comic-reader" target="_blank" rel="noopener">GitHub</a>
 				</nav>
 				<div class="nav__cta">
-					<a data-donate href="#support" class="btn btn--ghost btn-sm">
+					<a data-donate href="#download" class="btn btn--ghost btn-sm">
 						<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 							stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 							<path
@@ -883,11 +877,8 @@
 			<div class="wrap">
 				<div class="reveal">
 					<img src="assets/appicon.png" alt="Paper Comic Reader app icon" class="hero-icon" />
-					<h1 class="display h-hero measure"> Comics that read like <span class="paper-word">paper</span>, not
-						a backlit screen. </h1>
-					<p class="lead measure-wide"> A lean, native reader that renders every page with a real paper look:
-						warm tone, fine grain, ink that shows through. Your whole collection, private and on-device.
-					</p>
+					<h1 class="display h-hero measure">Your comics, the way they were meant to be read.</h1>
+					<p class="lead measure-wide">Read your favorite comics and feel like you're holding the printed issue in your hands.</p>
 					<div class="hero__cta">
 						<a data-appstore href="#download" class="btn btn--ink btn-lg" style="width:min(22rem,100%)">
 							<svg width="15" height="19" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
@@ -896,28 +887,28 @@
 							</svg>
 							<span class="btn__store"><small>Download on the</small><b>App Store</b></span>
 						</a>
+						<div class="hero__links">
 						<a href="https://github.com/Wiredframe/paper-comic-reader/releases" target="_blank"
-							rel="noopener" class="textlink"
-							style="color:#3a3212;text-decoration-color:rgba(90,70,10,.4)">
+							rel="noopener" class="textlink">
 							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 								stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
 							</svg> Get the .ipa </a>
 						<a href="https://github.com/Wiredframe/paper-comic-reader-mac" target="_blank"
-							rel="noopener" class="textlink"
-							style="color:#3a3212;text-decoration-color:rgba(90,70,10,.4)">
+							rel="noopener" class="textlink">
 							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 								stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
 								<rect x="3" y="4" width="18" height="12" rx="2" />
 								<path d="M8 20h8M12 16v4" />
 							</svg> Also on the Mac </a>
+						</div>
 					</div>
 					<p class="hero__note">
 						<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 							stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none">
 							<path d="M9 12l2 2 4-4" />
 							<circle cx="12" cy="12" r="9" />
-						</svg> No accounts. No tracking. Everything runs on your device.
+						</svg> No account to create. Your comics stay on your device.
 					</p>
 				</div>
 			</div>
@@ -932,9 +923,8 @@
 					<!-- Paper effect (wide, two phones) -->
 					<div class="reveal tile tile--shot tile--wide c-two-thirds">
 						<div class="tile__copy">
-							<h3 class="tile__title">Ink on paper, not glare.</h3>
-							<p class="tile__text">Every page is re-rendered warm, with fine grain and a little
-								show-through. Flip from screen to paper, live.</p>
+							<h3 class="tile__title">Paper the way you like it.</h3>
+							<p class="tile__text">A Metal shader renders the paper live on every page. Start from a preset like cream, newsprint or manga and fine-tune warmth, grain and show-through until it looks just right to you.</p>
 						</div>
 						<div class="shot shot--pair">
 							<div class="phone phone--back"><img src="assets/img/screens/reader.jpg" width="900"
@@ -946,7 +936,7 @@
 					<!-- Recents -->
 					<div class="reveal tile tile--shot c-third">
 						<h3 class="tile__title">Right where you left off.</h3>
-						<p class="tile__text">Recents opens on the comic you were reading, one tap from the page.</p>
+						<p class="tile__text">Open the app and the comic you're reading is waiting for you, one tap from the page you stopped on.</p>
 						<div class="shot">
 							<div class="phone"><img src="assets/img/screens/recents.jpg" width="900" height="1955"
 									loading="lazy" alt="Recents screen with the last comic and a Read button"></div>
@@ -954,9 +944,8 @@
 					</div>
 					<!-- Folder streaming -->
 					<div class="reveal tile tile--shot c-third">
-						<h3 class="tile__title">Point it at a folder.</h3>
-						<p class="tile__text">Aim it at any folder your Files app can reach. Covers load at once; a
-							comic downloads when you open it.</p>
+						<h3 class="tile__title">Bring your own library.</h3>
+						<p class="tile__text">Choose a folder on your NAS or in iCloud Drive and you see all your covers right away. A comic only downloads when you open it.</p>
 						<div class="shot">
 							<div class="phone"><img src="assets/img/screens/library.jpg" width="900" height="1955"
 									loading="lazy" alt="Library grid of comic covers with search"></div>
@@ -964,8 +953,8 @@
 					</div>
 					<!-- Privacy (accent, text only) -->
 					<div class="reveal tile tile--accent c-third">
-						<h3 class="tile__title">Collects nothing.</h3>
-						<p class="tile__text">No accounts, no ads, no tracking. Your library never leaves the device.
+						<h3 class="tile__title">Your comics stay yours.</h3>
+						<p class="tile__text">You don't sign up for anything, and what you read never leaves your device.
 						</p>
 						<div class="tile__spacer"></div>
 						<div class="pills">
@@ -981,9 +970,8 @@
 							<div class="phone"><img src="assets/img/screens/discover.jpg" width="900" height="1955"
 									loading="lazy" alt="Discover view with a large cover and Read button"></div>
 						</div>
-						<h3 class="tile__title">Browse like a deck.</h3>
-						<p class="tile__text">Big covers, swiped like cards. Filter by mood, or shuffle to a random
-							pick.</p>
+						<h3 class="tile__title">Can't decide what to read?</h3>
+						<p class="tile__text">Swipe through big covers like a deck of cards, or tap shuffle and let the app pick one for you.</p>
 					</div>
 					<!-- Bookmarks (text only, white) -->
 					<div class="reveal tile tile--white c-third">
@@ -992,16 +980,14 @@
 							<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
 						</svg>
 						<div class="tile__spacer"></div>
-						<h3 class="tile__title">Bookmarks you know on sight.</h3>
-						<p class="tile__text">One tap saves a picture of the page, not a number. All in one place,
-							searchable.</p>
+						<h3 class="tile__title">Visual bookmarks.</h3>
+						<p class="tile__text">Bookmark a page with one tap and it shows up as a thumbnail in your bookmarks, where you can search all of them in one place.</p>
 					</div>
 					<!-- Detail (wide, phone right) -->
 					<div class="reveal tile tile--shot tile--wide c-two-thirds">
 						<div class="tile__copy">
-							<h3 class="tile__title">Knows what's inside.</h3>
-							<p class="tile__text">Writers, artists and every story of an anthology, read straight from
-								the ComicInfo in your files.</p>
+							<h3 class="tile__title">Comic details at a glance.</h3>
+							<p class="tile__text">Open the details of a comic and you see writers, artists, the publisher and every story in an anthology, read from the ComicInfo in your files.</p>
 						</div>
 						<div class="shot">
 							<div class="phone"><img src="assets/img/screens/detail.jpg" width="900" height="1955"
@@ -1015,56 +1001,56 @@
 		<section id="features" class="section" style="background:linear-gradient(180deg,#f3efe4,#f6f2e9)">
 			<div class="wrap">
 				<div class="reveal measure stack" style="margin-bottom:2.25rem">
-					<h2 class="display h-sec">Small app. Deep reader.</h2>
+					<h2 class="display h-sec">Little things you'll notice while reading.</h2>
 				</div>
 				<div class="bento">
 					<div class="reveal tile tile--white c-third">
-						<h3 class="tile__title">120 Hz reader</h3>
-						<p class="tile__text">Turns pages at the full ProMotion rate, decoded off the main thread.</p>
+						<h3 class="tile__title">Smooth page turns</h3>
+						<p class="tile__text">Pages glide at up to 120 Hz on iPhones and iPads with ProMotion.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Double-page spread</h3>
-						<p class="tile__text">Two pages side by side, paired so they never mismatch.</p>
+						<p class="tile__text">Turn your iPad sideways and you see both pages of a spread, always the right pair.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Live Text</h3>
-						<p class="tile__text">Press and hold to select and copy text right off the page.</p>
+						<p class="tile__text">Press and hold a speech bubble to select and copy its text.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Double-tap to fit</h3>
-						<p class="tile__text">Toggles fit-width and fit-height. No pinch, no drift.</p>
+						<p class="tile__text">Double-tap to switch between the full page width and the full page height.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Page grid</h3>
-						<p class="tile__text">Jump anywhere from a thumbnail grid, cached to disk.</p>
+						<p class="tile__text">Looking for a scene? Jump to any page from the thumbnail overview.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Always resumes</h3>
-						<p class="tile__text">Reopens on your last page and marks itself read at the end.</p>
+						<p class="tile__text">Every comic opens on your last page and counts as read once you reach the end.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Every CBZ</h3>
-						<p class="tile__text">JPEG, PNG, GIF, WebP, HEIC and more, sorted naturally.</p>
+						<p class="tile__text">Your CBZ files open whatever image format is inside, with pages in the right order.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
-						<h3 class="tile__title">Import anywhere</h3>
-						<p class="tile__text">From Files, the share sheet, or as your default CBZ handler.</p>
+						<h3 class="tile__title">Open from anywhere</h3>
+						<p class="tile__text">Open comics from Files or the share sheet, or make the app your default for CBZ files.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Real covers in Files</h3>
-						<p class="tile__text">A QuickLook extension shows true cover art, not a ZIP icon.</p>
+						<p class="tile__text">The Files app shows the real cover of every comic, so you spot the right one fast.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">No duplicates</h3>
-						<p class="tile__text">Caught by content, not filename, so re-scans stay clean.</p>
+						<p class="tile__text">If the same comic turns up twice under different names, your library still lists it once.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">ComicInfo metadata</h3>
-						<p class="tile__text">Reads creators, characters and a story index for anthologies.</p>
+						<p class="tile__text">See creators and characters, and jump straight to a story in an anthology.</p>
 					</div>
 					<div class="reveal tile tile--white c-third">
 						<h3 class="tile__title">Built for iOS 26</h3>
-						<p class="tile__text">Native Liquid Glass, with Dark, Light and System themes.</p>
+						<p class="tile__text">Feels at home on iOS 26 with Liquid Glass, in light or dark mode as you like.</p>
 					</div>
 				</div>
 			</div>
@@ -1073,9 +1059,8 @@
 		<section id="download" class="section">
 			<div class="wrap">
 				<div class="reveal cta-band">
-					<h2 class="display" style="font-size:clamp(2.3rem,5.5vw,3.8rem)">Free. Forever.</h2>
-					<p class="lead measure-wide" style="margin:1rem auto 0"> No price, no subscription, no in-app
-						purchases. Just a good comic reader for iPhone, iPad and Mac, one download for all three. </p>
+					<h2 class="display" style="font-size:clamp(2.3rem,5.5vw,3.8rem)">It's free, and it stays free.</h2>
+					<p class="lead measure-wide" style="margin:1rem auto 0"> You pay nothing and there's nothing to unlock later. If you enjoy the app, a tip helps me keep working on it. </p>
 					<div class="hero__cta" style="margin-top:2rem">
 						<a data-appstore href="#download" class="btn btn--ink btn-lg" style="width:min(22rem,100%)">
 							<svg width="15" height="19" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
@@ -1084,13 +1069,26 @@
 							</svg>
 							<span class="btn__store"><small>Download on the</small><b>App Store</b></span>
 						</a>
-						<a href="https://github.com/Wiredframe/paper-comic-reader/releases" target="_blank"
-							rel="noopener" class="textlink"
-							style="color:#2a2510;text-decoration-color:rgba(60,44,0,.4)">
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-								stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-							</svg> Get the .ipa </a>
+						<div class="cta-band__more">
+							<a data-donate href="#download" class="btn btn--paper">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path
+									d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+							</svg> Leave a tip </a>
+							<a href="https://github.com/sponsors/Wiredframe?frequency=recurring&amp;amount=5"
+								target="_blank" rel="noopener" class="btn btn--line">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<path
+									d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 5 18 5.3 18 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z" />
+							</svg> Sponsor monthly </a>
+							<a href="https://github.com/Wiredframe/paper-comic-reader/releases" target="_blank"
+								rel="noopener" class="btn btn--line">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+									stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+								</svg> Get the .ipa </a>
+						</div>
 					</div>
 					<p style="margin-top:1.5rem;font-size:.9rem;color:#2a2510"> iOS&nbsp;26+ · iPhone &amp; iPad · macOS&nbsp;14+, also via <a
 							href="https://github.com/Wiredframe/paper-comic-reader-mac#install" target="_blank" rel="noopener"
@@ -1105,33 +1103,6 @@
 				</div>
 			</div>
 		</section>
-		<!-- ============ DONATION (compact, white card) ============ -->
-		<section id="support" class="section-tight">
-			<div class="wrap">
-				<div class="reveal donate-card">
-					<h2 class="display h-sec">Support</h2>
-					<p class="body" style="margin-top:.8rem">Paper Comic Reader is free and open source. If it earns a
-						spot on your home screen, you can leave a voluntary tip. No perks, no strings, entirely
-						optional.</p>
-					<div class="donate__btns">
-						<a data-donate href="#support" class="btn btn--yellow">
-							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path
-									d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-							</svg> Tip once </a>
-						<a href="https://github.com/sponsors/Wiredframe?frequency=recurring&amp;amount=5"
-							target="_blank" rel="noopener" class="btn btn--ghost">
-							<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-								<path
-									d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 5 18 5.3 18 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z" />
-							</svg> Monthly via GitHub Sponsors </a>
-					</div>
-					<p class="fineprint">Stripe (card or SEPA, no account) or GitHub Sponsors. The app stays free either
-						way.</p>
-				</div>
-			</div>
-		</section>
 		<!-- ============ FAQ ============ -->
 		<section class="section-tight">
 			<div class="wrap faq">
@@ -1139,35 +1110,31 @@
 				<div class="reveal">
 					<details class="q" open>
 						<summary>Is it really free? <span class="chev">+</span></summary>
-						<p>Yes, free and open source (MIT). No ads, no subscription, no in-app purchases. Tips are
-							welcome but entirely optional.</p>
+						<p>Yes. The app is open source under the MIT license and has no ads, subscriptions or in-app purchases. If you'd like to leave a tip, you're welcome to.</p>
 					</details>
 					<details class="q">
 						<summary>How do I install it without the App Store? <span class="chev">+</span></summary>
-						<p>Easiest is the App Store: one tap, automatic updates. If you'd rather not use it, download
+						<p>The App Store is the easiest way because you get updates automatically. If you prefer to sideload, download
 							the <code>.ipa</code> from GitHub Releases and install it with AltStore or Sideloadly.</p>
 					</details>
 					<details class="q">
 						<summary>What comic formats does it read? <span class="chev">+</span></summary>
-						<p>CBZ archives (ZIP-based), with JPEG, PNG, GIF, WebP, HEIC, BMP and TIFF pages inside. CBR and
-							PDF are not supported.</p>
+						<p>It reads CBZ archives with JPEG, PNG, GIF, WebP, HEIC, BMP or TIFF pages inside. CBR and PDF files aren't supported.</p>
 					</details>
 					<details class="q">
 						<summary>Does it work on iPad? <span class="chev">+</span></summary>
-						<p>Yes, it's universal for iPhone and iPad, portrait and landscape, with a proper two-page
-							spread on bigger screens. Requires iOS or iPadOS 26.</p>
+						<p>Yes. You can read on iPhone and iPad in portrait or landscape, and on a bigger screen you see two pages side by side. You need iOS or iPadOS 26.</p>
 					</details>
 					<details class="q">
 						<summary>Is there a Mac version? <span class="chev">+</span></summary>
 						<p>Yes. One App Store download covers iPhone, iPad and Mac (macOS 14 or later), and the Mac
 							app is also available through Homebrew and on <a
 								href="https://github.com/Wiredframe/paper-comic-reader-mac" target="_blank"
-								rel="noopener" style="text-decoration:underline">GitHub</a>. A library moves between
-							devices as one export file, with progress, favorites and bookmarks.</p>
+								rel="noopener" style="text-decoration:underline">GitHub</a>. You can move your library between devices as one export file, including your progress, favorites and bookmarks.</p>
 					</details>
 					<details class="q">
 						<summary>Do you collect any data? <span class="chev">+</span></summary>
-						<p>No. No accounts, no analytics, no tracking. Everything stays on your device.</p>
+						<p>No. You don't need an account, there are no analytics, and everything stays on your device.</p>
 					</details>
 				</div>
 			</div>
@@ -1182,15 +1149,14 @@
 						<img src="assets/appicon.png" alt="" />
 						<span>Paper Comic Reader</span>
 					</a>
-					<p class="body" style="margin-top:.8rem;max-width:24rem;font-size:.9rem"> A lean, native comic
-						reader that makes pages read like ink on paper. For iPhone, iPad and Mac, by <a
+					<p class="body" style="margin-top:.8rem;max-width:24rem;font-size:.9rem"> A comic reader that makes every page look like printed paper. For iPhone, iPad and Mac, by <a
 							href="https://www.wiredframe.de" target="_blank" rel="noopener"
 							style="text-decoration:underline;text-underline-offset:2px">Wiredframe</a> · Ulf Schuster.
 					</p>
 				</div>
 				<nav class="footer__links">
 					<a href="#features">Features</a>
-					<a href="#support">Support</a>
+					<a href="#download">Support</a>
 					<a href="https://github.com/Wiredframe/paper-comic-reader" target="_blank" rel="noopener">GitHub</a>
 					<a href="https://github.com/Wiredframe/paper-comic-reader/releases" target="_blank"
 						rel="noopener">Releases</a>
@@ -1245,7 +1211,7 @@
 			var ready = DONATE_URL && DONATE_URL.indexOf("PLACEHOLDER") === -1;
 			document.querySelectorAll("[data-donate]").forEach(function (a) {
 				if (ready) { a.href = DONATE_URL; a.target = "_blank"; a.rel = "noopener"; a.removeAttribute("aria-disabled"); }
-				else { a.href = "#support"; a.setAttribute("aria-disabled", "true"); }
+				else { a.href = "#download"; a.setAttribute("aria-disabled", "true"); }
 			});
 		})();
 	</script>
